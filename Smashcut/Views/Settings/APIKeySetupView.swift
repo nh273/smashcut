@@ -37,7 +37,7 @@ struct APIKeySetupView: View {
 
             VStack(spacing: 12) {
                 Button {
-                    KeychainService.shared.saveAPIKey(apiKey)
+                    appState.saveAPIKey(apiKey)
                     dismiss()
                 } label: {
                     Text("Continue")

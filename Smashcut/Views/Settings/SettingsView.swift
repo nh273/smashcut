@@ -22,7 +22,7 @@ struct SettingsView: View {
 
                 Section {
                     Button("Save API Key") {
-                        KeychainService.shared.saveAPIKey(apiKey)
+                        appState.saveAPIKey(apiKey)
                         showSaved = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                             dismiss()
@@ -32,7 +32,7 @@ struct SettingsView: View {
 
                     if appState.hasAPIKey {
                         Button("Remove API Key", role: .destructive) {
-                            KeychainService.shared.deleteAPIKey()
+                            appState.clearAPIKey()
                             apiKey = ""
                         }
                     }

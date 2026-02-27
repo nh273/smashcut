@@ -21,7 +21,10 @@ struct RootView: View {
         .sheet(isPresented: $appState.isSettingsPresented) {
             SettingsView()
         }
-        .sheet(isPresented: .constant(!appState.hasAPIKey)) {
+        .sheet(isPresented: Binding(
+            get: { !appState.hasAPIKey },
+            set: { _ in }
+        )) {
             APIKeySetupView()
         }
     }

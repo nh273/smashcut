@@ -7,12 +7,20 @@ class AppState {
     var selectedProjectID: UUID?
     var isSettingsPresented = false
 
-    var hasAPIKey: Bool {
-        KeychainService.shared.retrieveAPIKey() != nil
-    }
+    var hasAPIKey: Bool = KeychainService.shared.retrieveAPIKey() != nil
 
     init() {
         loadProjects()
+    }
+
+    func saveAPIKey(_ key: String) {
+        KeychainService.shared.saveAPIKey(key)
+        hasAPIKey = true
+    }
+
+    func clearAPIKey() {
+        KeychainService.shared.deleteAPIKey()
+        hasAPIKey = false
     }
 
     func loadProjects() {
