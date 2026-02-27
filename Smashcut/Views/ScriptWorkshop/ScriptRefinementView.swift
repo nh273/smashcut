@@ -27,8 +27,10 @@ struct ScriptRefinementView: View {
                         .background(Color.accentColor)
                         .clipShape(Circle())
 
-                    TextEditor(text: $sections[idx])
-                        .frame(minHeight: 80)
+                    // TextField with vertical axis expands naturally inside ScrollView
+                    // without the nested-scroll-view conflict that TextEditor causes.
+                    TextField("Section \(idx + 1)", text: $sections[idx], axis: .vertical)
+                        .lineLimit(2...10)
                         .padding(8)
                         .background(Color(.systemBackground))
                         .overlay(

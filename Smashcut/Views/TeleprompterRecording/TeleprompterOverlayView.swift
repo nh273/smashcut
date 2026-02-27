@@ -5,70 +5,52 @@ struct TeleprompterOverlayView: View {
     let currentWordIndex: Int
     let isRecording: Bool
 
+    private let wordsPerRow = 5
+
+    // Group word indices into rows of `wordsPerRow`
+    private var rows: [[Int]] {
+        stride(from: 0, to: words.count, by: wordsPerRow).map { start in
+            Array(start..<min(start + wordsPerRow, words.count))
+        }
+    }
+
+    private func rowIndex(for wordIndex: Int) -> Int {
+        wordIndex / wordsPerRow
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    Spacer().frame(height: 200)
-                    flowLayout
-                    Spacer().frame(height: 200)
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    Color.clear.frame(height: 180)
+
+                    ForEach(rows.indices, id: \.self) { rowIdx in
+                        HStack(alignment: .center, spacing: 8) {
+                            ForEach(rows[rowIdx], id: \.self) { wordIdx in
+                                Text(words[wordIdx])
+                                    .font(.system(size: 30, weight: .semibold))
+                                    .foregroundStyle(
+                                        wordIdx == currentWordIndex && isRecording
+                                            ? Color.yellow
+                                            : Color.white
+                                    )
+                                    .shadow(color: .black.opacity(0.8), radius: 3, x: 1, y: 1)
+                            }
+                        }
+                        // Each row is a direct LazyVStack child — scrollTo can target it
+                        .id(rowIdx)
+                    }
+
+                    Color.clear.frame(height: 180)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 20)
             }
             .onChange(of: currentWordIndex) { _, newIndex in
                 guard newIndex < words.count else { return }
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    proxy.scrollTo(newIndex, anchor: .center)
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    proxy.scrollTo(rowIndex(for: newIndex), anchor: .center)
                 }
             }
         }
-    }
-
-    private var flowLayout: some View {
-        // Simple flow layout using wrapped HStack approach
-        let lineBreakWords = buildLines(words: words, maxCharsPerLine: 30)
-        return VStack(alignment: .leading, spacing: 8) {
-            ForEach(lineBreakWords.indices, id: \.self) { lineIdx in
-                HStack(spacing: 6) {
-                    ForEach(lineBreakWords[lineIdx], id: \.offset) { item in
-                        Text(item.word)
-                            .font(.system(size: 28, weight: .semibold))
-                            .foregroundStyle(item.globalIndex == currentWordIndex && isRecording
-                                             ? Color.yellow
-                                             : Color.white)
-                            .shadow(color: .black, radius: 2, x: 1, y: 1)
-                            .id(item.globalIndex)
-                    }
-                }
-            }
-        }
-    }
-
-    private struct WordItem {
-        let word: String
-        let offset: Int
-        let globalIndex: Int
-    }
-
-    private func buildLines(words: [String], maxCharsPerLine: Int) -> [[WordItem]] {
-        var lines: [[WordItem]] = []
-        var currentLine: [WordItem] = []
-        var currentLength = 0
-
-        for (idx, word) in words.enumerated() {
-            let item = WordItem(word: word, offset: idx, globalIndex: idx)
-            if currentLength + word.count > maxCharsPerLine && !currentLine.isEmpty {
-                lines.append(currentLine)
-                currentLine = [item]
-                currentLength = word.count + 1
-            } else {
-                currentLine.append(item)
-                currentLength += word.count + 1
-            }
-        }
-        if !currentLine.isEmpty {
-            lines.append(currentLine)
-        }
-        return lines
     }
 }
