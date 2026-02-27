@@ -15,14 +15,18 @@ class CameraService: NSObject {
         let videoStatus = AVCaptureDevice.authorizationStatus(for: .video)
         let audioStatus = AVCaptureDevice.authorizationStatus(for: .audio)
 
-        var videoGranted = videoStatus == .authorized
-        var audioGranted = audioStatus == .authorized
+        let videoGranted: Bool
+        let audioGranted: Bool
 
         if videoStatus == .notDetermined {
             videoGranted = await AVCaptureDevice.requestAccess(for: .video)
+        } else {
+            videoGranted = videoStatus == .authorized
         }
         if audioStatus == .notDetermined {
             audioGranted = await AVCaptureDevice.requestAccess(for: .audio)
+        } else {
+            audioGranted = audioStatus == .authorized
         }
 
         await MainActor.run {

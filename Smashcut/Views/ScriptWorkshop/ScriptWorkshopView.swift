@@ -68,8 +68,8 @@ struct ScriptWorkshopView: View {
             vm.rawIdea = project.rawIdea
         }
         .navigationDestination(isPresented: $navigateToSections) {
-            if let script = appState.projects.first(where: { $0.id == project.id })?.script {
-                SectionManagerView(project: appState.projects.first(where: { $0.id == project.id })!)
+            if let updated = appState.projects.first(where: { $0.id == project.id }) {
+                SectionManagerView(project: updated)
             }
         }
     }

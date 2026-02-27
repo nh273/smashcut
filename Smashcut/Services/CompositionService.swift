@@ -68,7 +68,7 @@ actor CompositionService {
             textLayer.shadowOffset = CGSize(width: 2, height: 2)
             textLayer.shadowRadius = 4
             textLayer.alignmentMode = .center
-            textLayer.contentsScale = UIScreen.main.scale
+            textLayer.contentsScale = await MainActor.run { UIScreen.main.scale }
             textLayer.frame = CGRect(x: 0, y: 80, width: size.width, height: 100)
             textLayer.opacity = 0
 
