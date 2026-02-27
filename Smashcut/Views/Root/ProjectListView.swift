@@ -87,10 +87,12 @@ struct NewProjectSheet: View {
 
     @State private var title = ""
     @State private var idea = ""
+    @State private var createdProject: Project?
+    @State private var navigateToWorkshop = false
 
     var body: some View {
         NavigationStack {
-            Form {
+            List {
                 Section("Project Title") {
                     TextField("e.g. My Product Demo", text: $title)
                 }
@@ -103,6 +105,7 @@ struct NewProjectSheet: View {
                     Text("Describe what you want to talk about. Claude will refine it into sections.")
                 }
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("New Project")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -110,16 +113,19 @@ struct NewProjectSheet: View {
                     Button("Cancel") { isPresented = false }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    NavigationLink("Next") {
-                        ScriptWorkshopView(
-                            project: appState.createProject(
-                                title: title.isEmpty ? "Untitled" : title,
-                                rawIdea: idea
-                            )
+                    Button("Next") {
+                        createdProject = appState.createProject(
+                            title: title.isEmpty ? "Untitled" : title,
+                            rawIdea: idea
                         )
+                        navigateToWorkshop = true
                     }
                     .disabled(idea.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .simultaneousGesture(TapGesture().onEnded { isPresented = false })
+                }
+            }
+            .navigationDestination(isPresented: $navigateToWorkshop) {
+                if let project = createdProject {
+                    ScriptWorkshopView(project: project)
                 }
             }
         }
