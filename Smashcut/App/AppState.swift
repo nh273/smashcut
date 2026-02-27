@@ -31,11 +31,18 @@ class AppState {
         ProjectStore.shared.save(projects)
     }
 
+    /// Creates and immediately persists a project (used when re-refining an existing project).
     func createProject(title: String, rawIdea: String) -> Project {
         let project = Project(title: title, rawIdea: rawIdea)
         projects.append(project)
         saveProjects()
         return project
+    }
+
+    /// Persists a fully-built project for the first time (used after script refinement).
+    func addProject(_ project: Project) {
+        projects.append(project)
+        saveProjects()
     }
 
     func updateProject(_ updated: Project) {

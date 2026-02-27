@@ -2,15 +2,29 @@ import SwiftUI
 
 struct ScriptWorkshopView: View {
     @Environment(AppState.self) private var appState
-    let project: Project
+
+    private let project: Project
+    private let isNewProject: Bool
+
+    /// For re-refining a project that already exists in AppState.
+    init(project: Project) {
+        self.project = project
+        self.isNewProject = false
+    }
+
+    /// For a brand-new project — not yet saved, will be persisted only on accept.
+    init(newTitle: String, rawIdea: String) {
+        self.project = Project(title: newTitle.isEmpty ? "Untitled" : newTitle, rawIdea: rawIdea)
+        self.isNewProject = true
+    }
 
     @State private var vm = ScriptWorkshopViewModel()
+    @State private var acceptedProject: Project?
     @State private var navigateToSections = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // Raw idea display
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Your Idea")
                         .font(.headline)
@@ -20,7 +34,6 @@ struct ScriptWorkshopView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
 
-                // Refine button
                 if vm.refinedScript == nil && !vm.isRefining {
                     Button {
                         Task { await vm.refineScript() }
@@ -31,7 +44,6 @@ struct ScriptWorkshopView: View {
                     .buttonStyle(.borderedProminent)
                 }
 
-                // Loading
                 if vm.isRefining {
                     HStack {
                         ProgressView()
@@ -42,7 +54,6 @@ struct ScriptWorkshopView: View {
                     .padding()
                 }
 
-                // Error
                 if let error = vm.refinementError {
                     Label(error, systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.red)
@@ -51,7 +62,6 @@ struct ScriptWorkshopView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
 
-                // Refined output
                 if let refined = vm.refinedScript {
                     ScriptRefinementView(
                         refinedScript: refined,
@@ -67,18 +77,27 @@ struct ScriptWorkshopView: View {
         .onAppear {
             vm.rawIdea = project.rawIdea
         }
+        // Navigate using the locally-stored accepted project — no appState lookup needed.
         .navigationDestination(isPresented: $navigateToSections) {
-            if let updated = appState.projects.first(where: { $0.id == project.id }) {
-                SectionManagerView(project: updated)
+            if let p = acceptedProject {
+                SectionManagerView(project: p)
             }
         }
     }
 
     private func acceptScript() {
         var updated = project
-        let script = vm.buildScript(title: project.title)
-        updated.script = script
-        appState.updateProject(updated)
+        updated.script = vm.buildScript(title: project.title)
+
+        if isNewProject {
+            // First-time save — only now does it appear in the project list.
+            appState.addProject(updated)
+        } else {
+            appState.updateProject(updated)
+        }
+
+        // Store the result directly; don't rely on appState lookup for the push.
+        acceptedProject = updated
         navigateToSections = true
     }
 }

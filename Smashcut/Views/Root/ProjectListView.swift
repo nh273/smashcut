@@ -82,12 +82,10 @@ struct ProjectRowView: View {
 }
 
 struct NewProjectSheet: View {
-    @Environment(AppState.self) private var appState
     @Binding var isPresented: Bool
 
     @State private var title = ""
     @State private var idea = ""
-    @State private var createdProject: Project?
     @State private var navigateToWorkshop = false
 
     var body: some View {
@@ -97,12 +95,12 @@ struct NewProjectSheet: View {
                     TextField("e.g. My Product Demo", text: $title)
                 }
                 Section {
-                    TextEditor(text: $idea)
-                        .frame(minHeight: 120)
+                    TextField("Describe what you want to talk about…", text: $idea, axis: .vertical)
+                        .lineLimit(4...12)
                 } header: {
                     Text("Script Idea")
                 } footer: {
-                    Text("Describe what you want to talk about. Claude will refine it into sections.")
+                    Text("Claude will refine this into a polished script with sections.")
                 }
             }
             .listStyle(.insetGrouped)
@@ -114,19 +112,14 @@ struct NewProjectSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Next") {
-                        createdProject = appState.createProject(
-                            title: title.isEmpty ? "Untitled" : title,
-                            rawIdea: idea
-                        )
                         navigateToWorkshop = true
                     }
                     .disabled(idea.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
+            // Project is NOT created here — ScriptWorkshopView creates it only on accept.
             .navigationDestination(isPresented: $navigateToWorkshop) {
-                if let project = createdProject {
-                    ScriptWorkshopView(project: project)
-                }
+                ScriptWorkshopView(newTitle: title, rawIdea: idea)
             }
         }
     }
