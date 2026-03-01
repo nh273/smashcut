@@ -58,42 +58,88 @@ actor CompositionService {
         videoLayer.frame = CGRect(origin: .zero, size: size)
         parentLayer.addSublayer(videoLayer)
 
+        let screenScale = await MainActor.run { UIScreen.main.scale }
+
         for caption in captions {
+            let style = caption.style
+            let font = UIFont(name: style.fontName, size: CGFloat(style.fontSize))
+                      ?? UIFont.systemFont(ofSize: CGFloat(style.fontSize), weight: .bold)
+            let textColor = UIColor(
+                red: CGFloat(style.textColor.red),
+                green: CGFloat(style.textColor.green),
+                blue: CGFloat(style.textColor.blue),
+                alpha: CGFloat(style.textColor.alpha)
+            )
+            let layerHeight = CGFloat(style.fontSize) * 2.5
+            // verticalPosition is normalized 0=top, 1=bottom; CALayer y increases upward from bottom
+            let yPosition = CGFloat((1.0 - caption.verticalPosition) * Double(size.height))
+
+            // For highlight: add background layer behind text layer
+            if style.contrastMode == .highlight {
+                let textSize = (caption.text as NSString).size(withAttributes: [.font: font])
+                let padding: CGFloat = 8
+                let bgWidth = min(textSize.width + padding * 2, size.width)
+                let bgX = (size.width - bgWidth) / 2
+                let bgLayer = CALayer()
+                bgLayer.frame = CGRect(x: bgX, y: yPosition, width: bgWidth, height: layerHeight)
+                bgLayer.backgroundColor = UIColor.black.withAlphaComponent(0.7).cgColor
+                bgLayer.cornerRadius = 4
+                bgLayer.opacity = 0
+                addFadeAnimations(
+                    to: bgLayer,
+                    startTime: caption.startSeconds,
+                    endTime: caption.endSeconds,
+                    suffix: caption.id.uuidString + "_bg"
+                )
+                parentLayer.addSublayer(bgLayer)
+            }
+
             let textLayer = CATextLayer()
-            textLayer.string = caption.text
-            textLayer.font = UIFont.boldSystemFont(ofSize: 44)
-            textLayer.fontSize = 44
-            textLayer.foregroundColor = UIColor.white.cgColor
-            textLayer.shadowColor = UIColor.black.cgColor
-            textLayer.shadowOffset = CGSize(width: 2, height: 2)
-            textLayer.shadowRadius = 4
+            textLayer.frame = CGRect(x: 0, y: yPosition, width: size.width, height: layerHeight)
             textLayer.alignmentMode = .center
-            textLayer.contentsScale = await MainActor.run { UIScreen.main.scale }
-            textLayer.frame = CGRect(x: 0, y: 80, width: size.width, height: 100)
+            textLayer.contentsScale = screenScale
+            textLayer.isWrapped = true
             textLayer.opacity = 0
 
-            let startTime = caption.startSeconds
-            let endTime = caption.endSeconds
+            switch style.contrastMode {
+            case .none:
+                textLayer.string = caption.text
+                textLayer.font = font
+                textLayer.fontSize = CGFloat(style.fontSize)
+                textLayer.foregroundColor = textColor.cgColor
 
-            let fadeIn = CABasicAnimation(keyPath: "opacity")
-            fadeIn.fromValue = 0
-            fadeIn.toValue = 1
-            fadeIn.beginTime = startTime
-            fadeIn.duration = 0.1
-            fadeIn.isRemovedOnCompletion = false
-            fadeIn.fillMode = .forwards
+            case .stroke:
+                let attrs: [NSAttributedString.Key: Any] = [
+                    .font: font,
+                    .foregroundColor: textColor,
+                    .strokeColor: UIColor.black,
+                    .strokeWidth: Float(-3.0)
+                ]
+                textLayer.string = NSAttributedString(string: caption.text, attributes: attrs)
 
-            let fadeOut = CABasicAnimation(keyPath: "opacity")
-            fadeOut.fromValue = 1
-            fadeOut.toValue = 0
-            fadeOut.beginTime = endTime - 0.1
-            fadeOut.duration = 0.1
-            fadeOut.isRemovedOnCompletion = false
-            fadeOut.fillMode = .forwards
+            case .highlight:
+                textLayer.string = caption.text
+                textLayer.font = font
+                textLayer.fontSize = CGFloat(style.fontSize)
+                textLayer.foregroundColor = textColor.cgColor
 
-            textLayer.add(fadeIn, forKey: "fadeIn_\(caption.id)")
-            textLayer.add(fadeOut, forKey: "fadeOut_\(caption.id)")
+            case .shadow:
+                textLayer.string = caption.text
+                textLayer.font = font
+                textLayer.fontSize = CGFloat(style.fontSize)
+                textLayer.foregroundColor = textColor.cgColor
+                textLayer.shadowColor = UIColor.black.cgColor
+                textLayer.shadowOffset = CGSize(width: 2, height: 2)
+                textLayer.shadowRadius = 4
+                textLayer.shadowOpacity = 1
+            }
 
+            addFadeAnimations(
+                to: textLayer,
+                startTime: caption.startSeconds,
+                endTime: caption.endSeconds,
+                suffix: caption.id.uuidString
+            )
             parentLayer.addSublayer(textLayer)
         }
 
@@ -130,5 +176,26 @@ actor CompositionService {
         if let error = exportSession.error {
             throw CompositionError.exportFailed(error.localizedDescription)
         }
+    }
+
+    private func addFadeAnimations(to layer: CALayer, startTime: Double, endTime: Double, suffix: String) {
+        let fadeIn = CABasicAnimation(keyPath: "opacity")
+        fadeIn.fromValue = 0
+        fadeIn.toValue = 1
+        fadeIn.beginTime = startTime
+        fadeIn.duration = 0.1
+        fadeIn.isRemovedOnCompletion = false
+        fadeIn.fillMode = .forwards
+
+        let fadeOut = CABasicAnimation(keyPath: "opacity")
+        fadeOut.fromValue = 1
+        fadeOut.toValue = 0
+        fadeOut.beginTime = endTime - 0.1
+        fadeOut.duration = 0.1
+        fadeOut.isRemovedOnCompletion = false
+        fadeOut.fillMode = .forwards
+
+        layer.add(fadeIn, forKey: "fadeIn_\(suffix)")
+        layer.add(fadeOut, forKey: "fadeOut_\(suffix)")
     }
 }
