@@ -1,3 +1,4 @@
+import Photos
 import PhotosUI
 import SwiftUI
 
@@ -11,6 +12,8 @@ struct BackgroundEditorView: View {
     @State private var vm: BackgroundEditorViewModel
     @State private var showingMediaPicker = false
     @State private var pickerResult: PhotosPickerItem?
+    @State private var showSaveSuccess = false
+    @State private var cameraSaveError: String?
 
     init(section: ScriptSection, project: Project) {
         self.section = section
@@ -31,6 +34,10 @@ struct BackgroundEditorView: View {
 
                 if vm.isProcessing {
                     processingProgress
+                }
+
+                if vm.processingComplete {
+                    postProcessActions
                 }
 
                 if let error = vm.processingError {
@@ -58,8 +65,24 @@ struct BackgroundEditorView: View {
             Task { await vm.loadSelectedMedia() }
         }
         .onChange(of: vm.processingComplete) { _, done in
-            if done { saveAndDismiss() }
+            if done { saveSection() }
         }
+        .alert("Save Error", isPresented: .constant(cameraSaveError != nil)) {
+            Button("OK") { cameraSaveError = nil }
+        } message: {
+            Text(cameraSaveError ?? "")
+        }
+        .overlay(alignment: .bottom) {
+            if showSaveSuccess {
+                Label("Saved to Camera Roll", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.white)
+                    .padding()
+                    .background(.green, in: Capsule())
+                    .padding(.bottom, 32)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut, value: showSaveSuccess)
     }
 
     private var sectionPreview: some View {
@@ -147,6 +170,28 @@ struct BackgroundEditorView: View {
         .disabled(vm.isProcessing)
     }
 
+    private var postProcessActions: some View {
+        VStack(spacing: 12) {
+            if let compositeURL = vm.section.recording?.compositeVideoURL {
+                Button {
+                    Task { await saveToCameraRoll(url: compositeURL) }
+                } label: {
+                    Label("Save to Camera Roll", systemImage: "square.and.arrow.down")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+
+            Button {
+                saveAndDismiss()
+            } label: {
+                Text("Done")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+
     private var processingProgress: some View {
         VStack(spacing: 8) {
             ProgressView(value: vm.processingProgress)
@@ -168,7 +213,7 @@ struct BackgroundEditorView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 
-    private func saveAndDismiss() {
+    private func saveSection() {
         var updated = project
         if var script = updated.script {
             if let idx = script.sections.firstIndex(where: { $0.id == section.id }) {
@@ -177,6 +222,29 @@ struct BackgroundEditorView: View {
             updated.script = script
         }
         appState.updateProject(updated)
+    }
+
+    private func saveAndDismiss() {
+        saveSection()
         dismiss()
+    }
+
+    private func saveToCameraRoll(url: URL) async {
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            }
+            await MainActor.run {
+                showSaveSuccess = true
+            }
+            try? await Task.sleep(for: .seconds(2))
+            await MainActor.run {
+                showSaveSuccess = false
+            }
+        } catch {
+            await MainActor.run {
+                cameraSaveError = error.localizedDescription
+            }
+        }
     }
 }

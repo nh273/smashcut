@@ -1,3 +1,4 @@
+import Photos
 import SwiftUI
 
 struct CaptionExportView: View {
@@ -12,6 +13,9 @@ struct CaptionExportView: View {
     @State private var burnError: String?
     @State private var shareItems: [Any] = []
     @State private var showShareSheet = false
+    @State private var exportedVideoURL: URL?
+    @State private var showSaveSuccess = false
+    @State private var cameraSaveError: String?
 
     private var captions: [CaptionTimestamp] {
         section.recording?.captionTimestamps ?? []
@@ -38,6 +42,22 @@ struct CaptionExportView: View {
         } message: {
             Text(burnError ?? "")
         }
+        .alert("Save Error", isPresented: .constant(cameraSaveError != nil)) {
+            Button("OK") { cameraSaveError = nil }
+        } message: {
+            Text(cameraSaveError ?? "")
+        }
+        .overlay(alignment: .bottom) {
+            if showSaveSuccess {
+                Label("Saved to Camera Roll", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.white)
+                    .padding()
+                    .background(.green, in: Capsule())
+                    .padding(.bottom, 32)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut, value: showSaveSuccess)
     }
 
     private var sectionInfo: some View {
@@ -106,6 +126,16 @@ struct CaptionExportView: View {
                 .buttonStyle(.borderedProminent)
                 .disabled(isBurningIn || captions.isEmpty)
             }
+
+            if let url = exportedVideoURL {
+                Button {
+                    Task { await saveToCameraRoll(url: url) }
+                } label: {
+                    Label("Save to Camera Roll", systemImage: "square.and.arrow.down")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
         }
     }
 
@@ -134,6 +164,7 @@ struct CaptionExportView: View {
             )
             await MainActor.run {
                 isBurningIn = false
+                exportedVideoURL = outputURL
                 shareItems = [outputURL]
                 showShareSheet = true
                 markExported()
@@ -142,6 +173,25 @@ struct CaptionExportView: View {
             await MainActor.run {
                 isBurningIn = false
                 burnError = error.localizedDescription
+            }
+        }
+    }
+
+    private func saveToCameraRoll(url: URL) async {
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            }
+            await MainActor.run {
+                showSaveSuccess = true
+            }
+            try? await Task.sleep(for: .seconds(2))
+            await MainActor.run {
+                showSaveSuccess = false
+            }
+        } catch {
+            await MainActor.run {
+                cameraSaveError = error.localizedDescription
             }
         }
     }
