@@ -171,7 +171,7 @@ struct CaptionChunkRow: View {
                 .stroke(isSelected ? Color.accentColor : Color(.systemGray4), lineWidth: isSelected ? 2 : 0.5)
         )
         .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
-        .task(id: chunk.startSeconds) {
+        .task(id: chunk.id) {
             await loadThumbnail()
         }
     }
