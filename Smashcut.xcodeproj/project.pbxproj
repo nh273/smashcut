@@ -23,6 +23,7 @@
 		53C1CC37A3D463F1CAFC38B6 /* ThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09B51D4EFF9DA8773DDFDC8 /* ThumbnailService.swift */; };
 		5951D5BBA48ED64ED3F56BF3 /* SegmentationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0FDF7FC200D3879420288B /* SegmentationService.swift */; };
 		5A4D3F509E8D13924D9884F7 /* Script.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C2FE165C3ED04A4C9CA4C1 /* Script.swift */; };
+		6431C60094C62075F0EF59E0 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE6C49CCAAC0BBB987BC35F /* Timeline.swift */; };
 		6B52AC116979F944D298F683 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 889260E0CB89572D25BACEB8 /* Photos.framework */; };
 		71ACE39973FFA17BECBA4D8E /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8DCD49849D6C5DA519B14D /* RootView.swift */; };
 		725DE21D4A2A56174F1CB278 /* SmashcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD7495E4684EF3C3305CD21 /* SmashcutTests.swift */; };
@@ -67,6 +68,7 @@
 		01A4E9CBE51DE07F0B0DC19D /* ProjectMediaPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMediaPickerView.swift; sourceTree = "<group>"; };
 		0592190A7FE542F3CF076843 /* CaptionExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionExportView.swift; sourceTree = "<group>"; };
 		0730343A00F18DE303E51503 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1AE6C49CCAAC0BBB987BC35F /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		1C48C0C978D4E682DD1990E8 /* VideoTrimViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTrimViewModel.swift; sourceTree = "<group>"; };
 		25D925153B13AF56798C9238 /* TeleprompterOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleprompterOverlayView.swift; sourceTree = "<group>"; };
 		3ABE349CC1FAD1FB3557B1F6 /* APIKeySetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeySetupView.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				F5CE5CC959161B6D4873C8D3 /* Project.swift */,
 				795BDF1C12F4D92D82B2F265 /* Recording.swift */,
 				77C2FE165C3ED04A4C9CA4C1 /* Script.swift */,
+				1AE6C49CCAAC0BBB987BC35F /* Timeline.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -440,6 +443,7 @@
 				B27AD001F6DFB6728A54105A /* TeleprompterRecordingView.swift in Sources */,
 				343E4FDE5DD0004B6702FFDD /* TeleprompterRecordingViewModel.swift in Sources */,
 				53C1CC37A3D463F1CAFC38B6 /* ThumbnailService.swift in Sources */,
+				6431C60094C62075F0EF59E0 /* Timeline.swift in Sources */,
 				52588E3980A7AF89D6D863AD /* TimingUtilities.swift in Sources */,
 				CA7CE08EEDA713F97DDB16C6 /* TrimTimelineView.swift in Sources */,
 				83763EB8EF39A7DC99293432 /* VideoFileManager.swift in Sources */,

@@ -1,0 +1,168 @@
+import Foundation
+
+// MARK: - Layer Types
+
+enum LayerType: String, Codable {
+    case video
+    case photo
+    case text
+}
+
+enum FilterPreset: String, Codable {
+    case none
+    case vivid
+    case matte
+    case noir
+    case fade
+}
+
+// MARK: - Normalized Position
+
+/// A rectangle in normalized coordinates (0…1 in both dimensions).
+struct NormalizedRect: Codable, Equatable {
+    var x: Double
+    var y: Double
+    var width: Double
+    var height: Double
+
+    /// Covers the full frame.
+    static let fullFrame = NormalizedRect(x: 0, y: 0, width: 1, height: 1)
+}
+
+// MARK: - Layer
+
+/// A single media layer within a timeline segment.
+struct Layer: Identifiable, Codable {
+    var id: UUID = UUID()
+    /// Media type for this layer.
+    var type: LayerType
+    /// Source file URL. nil for text layers.
+    var sourceURL: URL?
+    /// Normalized position within the composition frame (0…1).
+    var position: NormalizedRect = .fullFrame
+    /// Stacking order — higher values appear on top.
+    var zIndex: Int = 0
+    var trimStartSeconds: Double?
+    var trimEndSeconds: Double?
+    /// Audio volume (0–1).
+    var volume: Double = 1.0
+    var filter: FilterPreset = .none
+    var hasBackgroundRemoval: Bool = false
+
+    init(
+        type: LayerType,
+        sourceURL: URL? = nil,
+        position: NormalizedRect = .fullFrame,
+        zIndex: Int = 0,
+        trimStartSeconds: Double? = nil,
+        trimEndSeconds: Double? = nil,
+        volume: Double = 1.0,
+        filter: FilterPreset = .none,
+        hasBackgroundRemoval: Bool = false
+    ) {
+        self.type = type
+        self.sourceURL = sourceURL
+        self.position = position
+        self.zIndex = zIndex
+        self.trimStartSeconds = trimStartSeconds
+        self.trimEndSeconds = trimEndSeconds
+        self.volume = volume
+        self.filter = filter
+        self.hasBackgroundRemoval = hasBackgroundRemoval
+    }
+}
+
+// MARK: - TextLayer
+
+/// A text overlay with caption styling and timing, composing a base Layer.
+struct TextLayer: Identifiable, Codable {
+    var id: UUID = UUID()
+    /// Base layer for position and z-ordering.
+    var layer: Layer
+    var text: String
+    var style: CaptionStyle = CaptionStyle()
+    var startSeconds: Double = 0
+    var endSeconds: Double = 0
+
+    init(
+        layer: Layer,
+        text: String,
+        style: CaptionStyle = CaptionStyle(),
+        startSeconds: Double = 0,
+        endSeconds: Double = 0
+    ) {
+        self.layer = layer
+        self.text = text
+        self.style = style
+        self.startSeconds = startSeconds
+        self.endSeconds = endSeconds
+    }
+}
+
+// MARK: - TimelineSegment
+
+/// Replaces ScriptSection. A paragraph of script with associated media and text layers.
+struct TimelineSegment: Identifiable, Codable {
+    var id: UUID = UUID()
+    var scriptText: String
+    var duration: Double = 0
+    var layers: [Layer] = []
+    var textLayers: [TextLayer] = []
+
+    init(scriptText: String) {
+        self.scriptText = scriptText
+    }
+}
+
+// MARK: - ProjectTimeline
+
+/// Replaces Script. The top-level timeline model for a project.
+struct ProjectTimeline: Codable {
+    var segments: [TimelineSegment]
+
+    init(segments: [TimelineSegment] = []) {
+        self.segments = segments
+    }
+}
+
+// MARK: - Migration from Script
+
+extension ProjectTimeline {
+    /// Wraps a legacy Script into a ProjectTimeline.
+    /// Each ScriptSection with a Recording becomes a TimelineSegment with a single
+    /// video Layer at zIndex 0. Caption timestamps become TextLayers at zIndex 10.
+    init(migratingFrom script: Script) {
+        self.segments = script.sections.map { section in
+            var segment = TimelineSegment(scriptText: section.text)
+            segment.duration = section.recording?.durationSeconds ?? 0
+
+            if let recording = section.recording {
+                let videoLayer = Layer(
+                    type: .video,
+                    sourceURL: recording.rawVideoURL,
+                    zIndex: 0,
+                    trimStartSeconds: recording.trimStartSeconds,
+                    trimEndSeconds: recording.trimEndSeconds,
+                    hasBackgroundRemoval: recording.backgroundMediaURL != nil
+                )
+                segment.layers = [videoLayer]
+
+                segment.textLayers = recording.captionTimestamps.map { ts in
+                    let baseLayer = Layer(
+                        type: .text,
+                        position: NormalizedRect(x: 0, y: ts.verticalPosition, width: 1, height: 0.1),
+                        zIndex: 10
+                    )
+                    return TextLayer(
+                        layer: baseLayer,
+                        text: ts.text,
+                        style: ts.style,
+                        startSeconds: ts.startSeconds,
+                        endSeconds: ts.endSeconds
+                    )
+                }
+            }
+            return segment
+        }
+    }
+}
