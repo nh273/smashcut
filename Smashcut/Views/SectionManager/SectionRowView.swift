@@ -49,6 +49,14 @@ struct SectionRowView: View {
                 .buttonStyle(.borderedProminent)
 
                 NavigationLink {
+                    VideoTrimView(section: section, project: project)
+                } label: {
+                    Label("Trim", systemImage: "scissors")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.bordered)
+
+                NavigationLink {
                     BackgroundEditorView(section: section, project: project)
                 } label: {
                     Label("Background", systemImage: "photo")
@@ -82,6 +90,14 @@ struct SectionRowView: View {
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
+
+                NavigationLink {
+                    VideoTrimView(section: section, project: project)
+                } label: {
+                    Label("Trim", systemImage: "scissors")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.bordered)
 
                 NavigationLink {
                     BackgroundEditorView(section: section, project: project)

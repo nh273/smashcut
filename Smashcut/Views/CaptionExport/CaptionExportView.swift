@@ -160,7 +160,9 @@ struct CaptionExportView: View {
             try await CompositionService.shared.burnCaptions(
                 inputURL: videoURL,
                 captions: captions,
-                outputURL: outputURL
+                outputURL: outputURL,
+                trimStart: section.recording?.trimStartSeconds ?? 0,
+                trimEnd: section.recording?.trimEndSeconds
             )
             await MainActor.run {
                 isBurningIn = false

@@ -19,13 +19,18 @@ actor CompositionService {
     }
 
     /// Burns captions into a video and exports the result.
+    /// - Parameters:
+    ///   - trimStart: Seconds into the source video where the exported clip begins.
+    ///   - trimEnd: Seconds into the source video where the exported clip ends (nil = full length).
     func burnCaptions(
         inputURL: URL,
         captions: [CaptionTimestamp],
-        outputURL: URL
+        outputURL: URL,
+        trimStart: Double = 0,
+        trimEnd: Double? = nil
     ) async throws {
         let asset = AVAsset(url: inputURL)
-        let duration = try await asset.load(.duration)
+        let fullDuration = try await asset.load(.duration)
         let videoTracks = try await asset.loadTracks(withMediaType: .video)
 
         guard let videoTrack = videoTracks.first else {
@@ -44,12 +49,19 @@ actor CompositionService {
             preferredTrackID: kCMPersistentTrackID_Invalid
         )
 
-        let timeRange = CMTimeRange(start: .zero, duration: duration)
+        let startTime = CMTime(seconds: max(0, trimStart), preferredTimescale: 600)
+        let endTime: CMTime = trimEnd.map { CMTime(seconds: min($0, fullDuration.seconds), preferredTimescale: 600) } ?? fullDuration
+        let timeRange = CMTimeRange(start: startTime, end: endTime)
+
         try videoCompositionTrack?.insertTimeRange(timeRange, of: videoTrack, at: .zero)
 
         if let audioTrack = try await asset.loadTracks(withMediaType: .audio).first {
             try audioCompositionTrack?.insertTimeRange(timeRange, of: audioTrack, at: .zero)
         }
+
+        // Caption timestamps are in source-video time; offset by trimStart so they align
+        // with the exported clip which starts at t=0.
+        let trimOffset = trimStart
 
         // Build caption layers
         let parentLayer = CALayer()
@@ -87,8 +99,8 @@ actor CompositionService {
                 bgLayer.opacity = 0
                 addFadeAnimations(
                     to: bgLayer,
-                    startTime: caption.startSeconds,
-                    endTime: caption.endSeconds,
+                    startTime: caption.startSeconds - trimOffset,
+                    endTime: caption.endSeconds - trimOffset,
                     suffix: caption.id.uuidString + "_bg"
                 )
                 parentLayer.addSublayer(bgLayer)
@@ -136,8 +148,8 @@ actor CompositionService {
 
             addFadeAnimations(
                 to: textLayer,
-                startTime: caption.startSeconds,
-                endTime: caption.endSeconds,
+                startTime: caption.startSeconds - trimOffset,
+                endTime: caption.endSeconds - trimOffset,
                 suffix: caption.id.uuidString
             )
             parentLayer.addSublayer(textLayer)
@@ -152,7 +164,7 @@ actor CompositionService {
         )
 
         let instruction = AVMutableVideoCompositionInstruction()
-        instruction.timeRange = timeRange
+        instruction.timeRange = CMTimeRange(start: .zero, duration: composition.duration)
         if let vct = videoCompositionTrack {
             let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: vct)
             instruction.layerInstructions = [layerInstruction]

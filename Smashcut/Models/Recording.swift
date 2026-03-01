@@ -10,6 +10,8 @@ struct Recording: Identifiable, Codable {
     var backgroundIsVideo: Bool = false
     var captionTimestamps: [CaptionTimestamp] = []
     var durationSeconds: Double = 0
+    var trimStartSeconds: Double? = nil
+    var trimEndSeconds: Double? = nil
 }
 
 /// RGBA color stored as Double components for Codable compatibility.
