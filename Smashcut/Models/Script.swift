@@ -20,6 +20,8 @@ struct ScriptSection: Identifiable, Codable {
     var text: String
     var recording: Recording?
     var status: SectionStatus
+    var isDraft: Bool = false
+    var previewThumbnailData: Data? = nil
 
     enum SectionStatus: String, Codable {
         case unrecorded

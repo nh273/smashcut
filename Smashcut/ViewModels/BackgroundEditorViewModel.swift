@@ -17,6 +17,7 @@ class BackgroundEditorViewModel {
     var processingProgress: Double = 0
     var processingError: String?
     var processingComplete = false
+    var draftSaved = false
 
     init(section: ScriptSection, projectID: UUID) {
         self.section = section
@@ -67,6 +68,16 @@ class BackgroundEditorViewModel {
         }
     }
 
+    func saveAsDraft() async {
+        guard let recording = section.recording else { return }
+        let thumbnailData = await ThumbnailService.generateThumbnail(from: recording.rawVideoURL)
+        await MainActor.run {
+            self.section.isDraft = true
+            self.section.previewThumbnailData = thumbnailData
+            self.draftSaved = true
+        }
+    }
+
     func processBackground() async {
         guard let recording = section.recording else {
             processingError = "No recording found for this section."
@@ -99,6 +110,8 @@ class BackgroundEditorViewModel {
                     self.section.recording = rec
                 }
                 self.section.status = .processed
+                self.section.isDraft = false
+                self.section.previewThumbnailData = nil
                 self.isProcessing = false
                 self.processingComplete = true
             }

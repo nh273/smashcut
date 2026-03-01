@@ -32,6 +32,8 @@ struct BackgroundEditorView: View {
                     processButton
                 }
 
+                saveDraftButton
+
                 if vm.isProcessing {
                     processingProgress
                 }
@@ -83,6 +85,9 @@ struct BackgroundEditorView: View {
             }
         }
         .animation(.easeInOut, value: showSaveSuccess)
+        .onChange(of: vm.draftSaved) { _, saved in
+            if saved { saveAndDismiss() }
+        }
     }
 
     private var sectionPreview: some View {
@@ -157,6 +162,17 @@ struct BackgroundEditorView: View {
                 }
             }
         }
+    }
+
+    private var saveDraftButton: some View {
+        Button {
+            Task { await vm.saveAsDraft() }
+        } label: {
+            Label("Save as Draft", systemImage: "tray.and.arrow.down")
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .disabled(vm.isProcessing || vm.section.recording == nil)
     }
 
     private var processButton: some View {
