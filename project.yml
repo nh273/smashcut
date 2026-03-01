@@ -23,6 +23,7 @@ targets:
       properties:
         NSCameraUsageDescription: "Smashcut needs camera access to record your narration."
         NSMicrophoneUsageDescription: "Smashcut needs microphone access to record your voice."
+        NSPhotoLibraryAddUsageDescription: "Smashcut needs permission to save exported videos to your camera roll."
         NSPhotoLibraryUsageDescription: "Smashcut needs photo library access to pick background media."
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
