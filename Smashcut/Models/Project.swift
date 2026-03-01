@@ -5,6 +5,7 @@ struct Project: Identifiable, Codable {
     var title: String
     var rawIdea: String
     var script: Script?
+    var linkedMediaIDs: [String] = []
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
 
