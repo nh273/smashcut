@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		069BDEBA83C692871BCA7CEA /* SectionManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDABCD779111C1CAAF688DDC /* SectionManagerView.swift */; };
+		1B55091604B44090B1FF1A67 /* CaptionEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006475E10D8D4BA08FB49DF1 /* CaptionEditorView.swift */; };
+		9761272143E9413BB36E3C86 /* CaptionEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014CF8EE80AC4D0A8AB9D12E /* CaptionEditorViewModel.swift */; };
 		10666A40146E6A31B70428E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DFC52192EEB8AA6138CF828 /* AVFoundation.framework */; };
 		198FA3C8AD99B7E1FF09A758 /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 450DCE75F03AA9ACFC962622 /* Vision.framework */; };
 		1E36DFB3523BBE1EED2415B5 /* TeleprompterOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D925153B13AF56798C9238 /* TeleprompterOverlayView.swift */; };
@@ -55,7 +57,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		006475E10D8D4BA08FB49DF1 /* CaptionEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionEditorView.swift; sourceTree = "<group>"; };
 		013CAD21CA6306B235839ED6 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
+		014CF8EE80AC4D0A8AB9D12E /* CaptionEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionEditorViewModel.swift; sourceTree = "<group>"; };
 		0592190A7FE542F3CF076843 /* CaptionExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionExportView.swift; sourceTree = "<group>"; };
 		0730343A00F18DE303E51503 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		25D925153B13AF56798C9238 /* TeleprompterOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleprompterOverlayView.swift; sourceTree = "<group>"; };
@@ -180,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */,
+				014CF8EE80AC4D0A8AB9D12E /* CaptionEditorViewModel.swift */,
 				AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */,
 				B6FBDEB05372D67248D3E238 /* TeleprompterRecordingViewModel.swift */,
 			);
@@ -241,10 +246,19 @@
 			path = Root;
 			sourceTree = "<group>";
 		};
+		5CFBC6E788744351A918D33D /* CaptionEditor */ = {
+			isa = PBXGroup;
+			children = (
+				006475E10D8D4BA08FB49DF1 /* CaptionEditorView.swift */,
+			);
+			path = CaptionEditor;
+			sourceTree = "<group>";
+		};
 		93862050F723DD8E86FC624C /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				63D306EF59646082CD17B624 /* BackgroundEditor */,
+				5CFBC6E788744351A918D33D /* CaptionEditor */,
 				FC1BA54252730B5242A8501B /* CaptionExport */,
 				882ACED5EBD4641C088BFB6F /* Root */,
 				C822472C4DDEA04DA295A0C4 /* ScriptWorkshop */,
@@ -377,7 +391,9 @@
 				E0FC4FCF868E8CAC2876F548 /* BackgroundEditorViewModel.swift in Sources */,
 				C6B351131B79359DBE5FF67E /* CameraPreviewView.swift in Sources */,
 				FF0374109B30A9687748CE7F /* CameraService.swift in Sources */,
-				AE80D20ED65C867FC83E3432 /* CaptionExportView.swift in Sources */,
+				1B55091604B44090B1FF1A67 /* CaptionEditorView.swift in Sources */,
+			9761272143E9413BB36E3C86 /* CaptionEditorViewModel.swift in Sources */,
+			AE80D20ED65C867FC83E3432 /* CaptionExportView.swift in Sources */,
 				30CD376049EC72EB181CE3BE /* ClaudeService.swift in Sources */,
 				E375BF3CFF988233B7B37FFE /* CompositionService.swift in Sources */,
 				7A8EA5E2AE17DAF5D846113D /* KeychainService.swift in Sources */,

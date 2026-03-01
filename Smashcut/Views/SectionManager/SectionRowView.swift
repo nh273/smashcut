@@ -41,6 +41,14 @@ struct SectionRowView: View {
         case .recorded:
             HStack {
                 NavigationLink {
+                    CaptionEditorView(section: section, project: project)
+                } label: {
+                    Label("Edit Captions", systemImage: "captions.bubble")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.borderedProminent)
+
+                NavigationLink {
                     BackgroundEditorView(section: section, project: project)
                 } label: {
                     Label("Background", systemImage: "photo")
@@ -59,6 +67,14 @@ struct SectionRowView: View {
 
         case .processed:
             HStack {
+                NavigationLink {
+                    CaptionEditorView(section: section, project: project)
+                } label: {
+                    Label("Edit Captions", systemImage: "captions.bubble")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.bordered)
+
                 NavigationLink {
                     CaptionExportView(section: section, project: project)
                 } label: {
