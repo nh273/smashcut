@@ -67,8 +67,16 @@ actor ClaudeService {
             throw ClaudeError.invalidResponse
         }
 
+        // Strip markdown code fences if present (e.g. ```json ... ```)
+        var jsonText = textContent.trimmingCharacters(in: .whitespacesAndNewlines)
+        if jsonText.hasPrefix("```") {
+            let lines = jsonText.components(separatedBy: "\n")
+            let stripped = lines.dropFirst().dropLast()
+            jsonText = stripped.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
         // Parse JSON from Claude's text content
-        if let jsonData = textContent.data(using: .utf8),
+        if let jsonData = jsonText.data(using: .utf8),
            let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
            let refinedScript = json["refinedScript"] as? String,
            let sections = json["sections"] as? [String] {
