@@ -88,7 +88,7 @@ class TeleprompterRecordingViewModel {
             let timestamp = CaptionTimestamp(
                 text: word,
                 startSeconds: elapsed,
-                endSeconds: elapsed + secondsPerWord
+                endSeconds: elapsed + TimingUtilities.defaultDuration(for: word)
             )
             self.captionTimestamps.append(timestamp)
             self.currentWordIndex = wordIndex

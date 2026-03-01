@@ -68,6 +68,12 @@ struct TimingUtilities {
         return chunks
     }
 
+    /// Returns a default display duration for a caption based on character count.
+    /// Formula: max(1.5, charCount / 15.0) — ~1.5s minimum, ~4s for a 60-char chunk.
+    static func defaultDuration(for text: String) -> Double {
+        max(1.5, Double(text.count) / 15.0)
+    }
+
     static func formatSRTTime(_ seconds: Double) -> String {
         let totalMs = Int((seconds * 1000).rounded())
         let ms = totalMs % 1000
