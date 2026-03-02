@@ -51,10 +51,10 @@ class BackgroundEditorViewModel {
         }
 
         // Try video
-        if let movie = try? await item.loadTransferable(type: URL.self) {
-            let ext = movie.pathExtension
+        if let movie = try? await item.loadTransferable(type: MovieTransferable.self) {
+            let ext = movie.url.pathExtension
             let url = VideoFileManager.backgroundMediaURL(projectID: projectID, sectionID: section.id, ext: ext)
-            try? FileManager.default.copyItem(at: movie, to: url)
+            try? FileManager.default.copyItem(at: movie.url, to: url)
             await MainActor.run {
                 self.backgroundVideoURL = url
                 self.isVideo = true

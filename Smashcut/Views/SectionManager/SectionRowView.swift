@@ -1,8 +1,23 @@
+import AVFoundation
+import PhotosUI
 import SwiftUI
 
 struct SectionRowView: View {
     let section: ScriptSection
     let project: Project
+
+    @Environment(AppState.self) private var appState
+    @State private var importItem: PhotosPickerItem?
+    @State private var isImporting = false
+
+    // Navigation state — one @State per destination prevents simultaneous firing
+    @State private var navigateToRecord = false
+    @State private var navigateToCaptionEditor = false
+    @State private var navigateToTrim = false
+    @State private var navigateToBackground = false
+    @State private var navigateToRerecord = false
+    @State private var navigateToExport = false
+    @State private var navigateToReprocess = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -24,49 +39,81 @@ struct SectionRowView: View {
             }
         }
         .padding(.vertical, 4)
+        // All navigation destinations declared once, on the outer VStack
+        .navigationDestination(isPresented: $navigateToRecord) {
+            TeleprompterRecordingView(section: section, project: project)
+        }
+        .navigationDestination(isPresented: $navigateToCaptionEditor) {
+            CaptionEditorView(section: section, project: project)
+        }
+        .navigationDestination(isPresented: $navigateToTrim) {
+            VideoTrimView(section: section, project: project)
+        }
+        .navigationDestination(isPresented: $navigateToBackground) {
+            BackgroundEditorView(section: section, project: project)
+        }
+        .navigationDestination(isPresented: $navigateToRerecord) {
+            TeleprompterRecordingView(section: section, project: project)
+        }
+        .navigationDestination(isPresented: $navigateToExport) {
+            CaptionExportView(section: section, project: project)
+        }
+        .navigationDestination(isPresented: $navigateToReprocess) {
+            BackgroundEditorView(section: section, project: project)
+        }
+        .onChange(of: importItem) { _, newItem in
+            guard let newItem else { return }
+            isImporting = true
+            Task { await importVideo(from: newItem) }
+        }
     }
 
     @ViewBuilder
     private var actionButton: some View {
         switch section.status {
         case .unrecorded:
-            NavigationLink {
-                TeleprompterRecordingView(section: section, project: project)
-            } label: {
-                Label("Record", systemImage: "record.circle")
-                    .font(.caption.bold())
+            HStack(spacing: 8) {
+                Button { navigateToRecord = true } label: {
+                    Label("Record", systemImage: "record.circle")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.borderedProminent)
+
+                PhotosPicker(selection: $importItem, matching: .videos) {
+                    if isImporting {
+                        ProgressView()
+                            .tint(.primary)
+                            .frame(width: 16, height: 16)
+                    } else {
+                        Label("Import", systemImage: "photo.badge.plus")
+                            .font(.caption.bold())
+                    }
+                }
+                .buttonStyle(.bordered)
+                .disabled(isImporting)
             }
-            .buttonStyle(.borderedProminent)
 
         case .recorded:
             HStack {
-                NavigationLink {
-                    CaptionEditorView(section: section, project: project)
-                } label: {
+                Button { navigateToCaptionEditor = true } label: {
                     Label("Edit Captions", systemImage: "captions.bubble")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
 
-                NavigationLink {
-                    VideoTrimView(section: section, project: project)
-                } label: {
+                Button { navigateToTrim = true } label: {
                     Label("Trim", systemImage: "scissors")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
-                NavigationLink {
-                    BackgroundEditorView(section: section, project: project)
-                } label: {
+                Button { navigateToBackground = true } label: {
                     Label("Background", systemImage: "photo")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
-                NavigationLink {
-                    TeleprompterRecordingView(section: section, project: project)
-                } label: {
+                Button { navigateToRerecord = true } label: {
                     Label("Re-record", systemImage: "arrow.clockwise")
                         .font(.caption.bold())
                 }
@@ -75,33 +122,25 @@ struct SectionRowView: View {
 
         case .processed:
             HStack {
-                NavigationLink {
-                    CaptionEditorView(section: section, project: project)
-                } label: {
+                Button { navigateToCaptionEditor = true } label: {
                     Label("Edit Captions", systemImage: "captions.bubble")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
-                NavigationLink {
-                    CaptionExportView(section: section, project: project)
-                } label: {
+                Button { navigateToExport = true } label: {
                     Label("Export", systemImage: "square.and.arrow.up")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
 
-                NavigationLink {
-                    VideoTrimView(section: section, project: project)
-                } label: {
+                Button { navigateToTrim = true } label: {
                     Label("Trim", systemImage: "scissors")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
-                NavigationLink {
-                    BackgroundEditorView(section: section, project: project)
-                } label: {
+                Button { navigateToReprocess = true } label: {
                     Label("Re-process", systemImage: "arrow.clockwise")
                         .font(.caption.bold())
                 }
@@ -112,6 +151,56 @@ struct SectionRowView: View {
             Label("Exported", systemImage: "checkmark.circle.fill")
                 .font(.caption.bold())
                 .foregroundStyle(.green)
+        }
+    }
+
+    private func importVideo(from item: PhotosPickerItem) async {
+        defer {
+            Task { @MainActor in
+                isImporting = false
+                importItem = nil
+            }
+        }
+
+        guard let movie = try? await item.loadTransferable(type: MovieTransferable.self) else { return }
+        let videoURL = movie.url
+
+        let destURL = VideoFileManager.rawVideoURL(projectID: project.id, sectionID: section.id)
+        try? FileManager.default.removeItem(at: destURL)
+        guard (try? FileManager.default.copyItem(at: videoURL, to: destURL)) != nil else { return }
+
+        let asset = AVAsset(url: destURL)
+        let duration = (try? await asset.load(.duration)).map { CMTimeGetSeconds($0) } ?? 0
+
+        let words = section.text
+            .components(separatedBy: .whitespaces)
+            .filter { !$0.isEmpty }
+        let secondsPerWord = words.isEmpty ? 0 : duration / Double(words.count)
+        let timestamps = words.enumerated().map { i, word in
+            CaptionTimestamp(
+                text: word,
+                startSeconds: Double(i) * secondsPerWord,
+                endSeconds: Double(i + 1) * secondsPerWord
+            )
+        }
+
+        var recording = Recording(sectionID: section.id, rawVideoURL: destURL)
+        recording.captionTimestamps = timestamps
+        recording.durationSeconds = duration
+
+        var updatedSection = section
+        updatedSection.recording = recording
+        updatedSection.status = .recorded
+
+        var updatedProject = project
+        if var script = updatedProject.script,
+           let idx = script.sections.firstIndex(where: { $0.id == section.id }) {
+            script.sections[idx] = updatedSection
+            updatedProject.script = script
+        }
+
+        await MainActor.run {
+            appState.updateProject(updatedProject)
         }
     }
 }

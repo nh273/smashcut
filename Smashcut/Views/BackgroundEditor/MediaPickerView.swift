@@ -1,5 +1,22 @@
 import PhotosUI
 import SwiftUI
+import UniformTypeIdentifiers
+
+struct MovieTransferable: Transferable {
+    let url: URL
+
+    static var transferRepresentation: some TransferRepresentation {
+        FileRepresentation(contentType: .movie) { movie in
+            SentTransferredFile(movie.url)
+        } importing: { received in
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension("mov")
+            try FileManager.default.copyItem(at: received.file, to: tempURL)
+            return MovieTransferable(url: tempURL)
+        }
+    }
+}
 
 struct MediaPickerView: UIViewControllerRepresentable {
     var onSelect: (PHPickerResult?) -> Void
