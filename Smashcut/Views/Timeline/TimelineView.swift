@@ -151,9 +151,9 @@ struct ProjectTimelineView: View {
                 )
             }
             .gesture(
-                MagnificationGesture()
+                MagnifyGesture()
                     .onChanged { value in
-                        viewModel.scale = max(20, min(500, viewModel.scale * value))
+                        viewModel.scale = max(20, min(500, viewModel.scale * value.magnification))
                     }
             )
         }
@@ -193,8 +193,7 @@ private struct TimelineRulerView: View {
     let onSeek: (Double) -> Void
 
     var body: some View {
-        GeometryReader { geo in
-            let width = geo.size.width
+        GeometryReader { _ in
             Canvas { context, size in
                 let tickInterval = rulerTickInterval(scale: scale)
                 var t: Double = 0
@@ -227,8 +226,9 @@ private struct TimelineRulerView: View {
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        let frac = max(0, value.location.x) / max(1, width)
-                        onSeek(Double(frac) * totalDuration)
+                        guard scale > 0 else { return }
+                        let seconds = max(0, min(totalDuration, Double(value.location.x) / scale))
+                        onSeek(seconds)
                     }
             )
         }

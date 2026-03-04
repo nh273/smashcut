@@ -231,14 +231,17 @@ struct LayerTrackView: View {
                             onOffsetChange(max(0, layer.startOffset + delta))
                         }
                 )
-                .gesture(
-                    // Vertical drag for volume
-                    DragGesture(minimumDistance: 5)
-                        .onChanged { value in
-                            let deltaVol = -Double(value.translation.height) / 100
-                            onVolumeChange(max(0, min(1, layer.volume + deltaVol)))
+                .contextMenu {
+                    ForEach([0.0, 0.25, 0.5, 0.75, 1.0], id: \.self) { vol in
+                        Button {
+                            onVolumeChange(vol)
+                        } label: {
+                            Label(
+                                "Volume \(Int(vol * 100))%",
+                                systemImage: vol == 0 ? "speaker.slash" : "speaker.wave.\(min(3, Int(vol * 3) + 1))")
                         }
-                )
+                    }
+                }
         }
         .frame(height: 28)
     }
