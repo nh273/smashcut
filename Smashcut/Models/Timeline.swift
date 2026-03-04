@@ -16,6 +16,14 @@ enum FilterPreset: String, Codable {
     case fade
 }
 
+/// Cache state for pre-rendered layer assets.
+enum CacheState: Codable, Equatable {
+    case none
+    case processing(progress: Double)
+    case ready
+    case stale
+}
+
 // MARK: - Normalized Position
 
 /// A rectangle in normalized coordinates (0…1 in both dimensions).
@@ -48,6 +56,10 @@ struct Layer: Identifiable, Codable {
     var volume: Double = 1.0
     var filter: FilterPreset = .none
     var hasBackgroundRemoval: Bool = false
+    /// URL to pre-rendered cached asset (bg removal output). Used by compositor to skip live processing.
+    var cachedProcessedURL: URL?
+    /// Current cache state for this layer's expensive operations.
+    var cacheState: CacheState = .none
 
     init(
         type: LayerType,
@@ -58,7 +70,9 @@ struct Layer: Identifiable, Codable {
         trimEndSeconds: Double? = nil,
         volume: Double = 1.0,
         filter: FilterPreset = .none,
-        hasBackgroundRemoval: Bool = false
+        hasBackgroundRemoval: Bool = false,
+        cachedProcessedURL: URL? = nil,
+        cacheState: CacheState = .none
     ) {
         self.type = type
         self.sourceURL = sourceURL
@@ -69,6 +83,20 @@ struct Layer: Identifiable, Codable {
         self.volume = volume
         self.filter = filter
         self.hasBackgroundRemoval = hasBackgroundRemoval
+        self.cachedProcessedURL = cachedProcessedURL
+        self.cacheState = cacheState
+    }
+
+    /// Whether this layer needs expensive pre-rendering (background removal).
+    var needsCaching: Bool {
+        hasBackgroundRemoval && type == .video
+    }
+
+    /// Mark cache as stale, clearing the cached URL.
+    mutating func invalidateCache() {
+        guard cacheState != .none else { return }
+        cacheState = .stale
+        cachedProcessedURL = nil
     }
 }
 

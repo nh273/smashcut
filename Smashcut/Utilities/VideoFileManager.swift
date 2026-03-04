@@ -38,6 +38,54 @@ struct VideoFileManager {
         return dir
     }
 
+    // MARK: - Layer Cache
+
+    /// Directory for pre-rendered layer cache files.
+    static var layerCacheDirectory: URL {
+        let caches = FileManager.default
+            .urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let dir = caches.appendingPathComponent("smashcut/layers", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    /// URL for a layer's pre-rendered cached asset.
+    static func layerCacheURL(layerID: UUID) -> URL {
+        return layerCacheDirectory
+            .appendingPathComponent("\(layerID)-processed.mp4")
+    }
+
+    /// Total size of the layer cache directory in bytes.
+    static func layerCacheSize() -> UInt64 {
+        let fm = FileManager.default
+        let dir = layerCacheDirectory
+        guard let enumerator = fm.enumerator(at: dir, includingPropertiesForKeys: [.fileSizeKey]) else {
+            return 0
+        }
+        var total: UInt64 = 0
+        for case let fileURL as URL in enumerator {
+            if let size = try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+                total += UInt64(size)
+            }
+        }
+        return total
+    }
+
+    /// Remove all files in the layer cache directory.
+    static func clearLayerCache() {
+        let fm = FileManager.default
+        let dir = layerCacheDirectory
+        guard let contents = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil) else { return }
+        for file in contents {
+            try? fm.removeItem(at: file)
+        }
+    }
+
+    /// Remove a specific layer's cached file.
+    static func removeLayerCache(layerID: UUID) {
+        try? FileManager.default.removeItem(at: layerCacheURL(layerID: layerID))
+    }
+
     private static var baseDirectory: URL {
         let appSupport = FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
