@@ -6,6 +6,7 @@ struct SectionManagerView: View {
     var project: Project
 
     @State private var showMediaPicker = false
+    @State private var navigateToTimeline = false
 
     var currentProject: Project {
         appState.projects.first(where: { $0.id == project.id }) ?? project
@@ -13,11 +14,27 @@ struct SectionManagerView: View {
 
     var body: some View {
         List {
+            if currentProject.timeline != nil {
+                Section {
+                    Button {
+                        navigateToTimeline = true
+                    } label: {
+                        Label("Open Timeline", systemImage: "timeline.selection")
+                            .font(.body.bold())
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                }
+            }
             scriptSection
             mediaSection
         }
         .navigationTitle(currentProject.title)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $navigateToTimeline) {
+            ProjectTimelineView(project: currentProject)
+        }
         .sheet(isPresented: $showMediaPicker) {
             ProjectMediaPickerView { identifiers in
                 addMedia(identifiers)

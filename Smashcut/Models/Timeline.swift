@@ -60,6 +60,8 @@ struct Layer: Identifiable, Codable {
     var cachedProcessedURL: URL?
     /// Current cache state for this layer's expensive operations.
     var cacheState: CacheState = .none
+    /// Time offset of this layer from the start of its segment (seconds).
+    var startOffset: Double = 0
 
     init(
         type: LayerType,
@@ -72,7 +74,8 @@ struct Layer: Identifiable, Codable {
         filter: FilterPreset = .none,
         hasBackgroundRemoval: Bool = false,
         cachedProcessedURL: URL? = nil,
-        cacheState: CacheState = .none
+        cacheState: CacheState = .none,
+        startOffset: Double = 0
     ) {
         self.type = type
         self.sourceURL = sourceURL
@@ -85,6 +88,7 @@ struct Layer: Identifiable, Codable {
         self.hasBackgroundRemoval = hasBackgroundRemoval
         self.cachedProcessedURL = cachedProcessedURL
         self.cacheState = cacheState
+        self.startOffset = startOffset
     }
 
     /// Whether this layer needs expensive pre-rendering (background removal).
