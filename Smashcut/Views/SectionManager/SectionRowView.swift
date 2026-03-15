@@ -47,7 +47,9 @@ struct SectionRowView: View {
             CaptionEditorView(section: section, project: project)
         }
         .navigationDestination(isPresented: $navigateToTrim) {
-            VideoTrimView(section: section, project: project)
+            if section.recording != nil {
+                VideoTrimView(section: section, project: project)
+            }
         }
         .navigationDestination(isPresented: $navigateToBackground) {
             BackgroundEditorView(section: section, project: project)
