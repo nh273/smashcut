@@ -127,15 +127,16 @@ struct CaptionEditorView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {
+                    SaveStatusView(isSaving: false)
                     Button {
                         isStylePickerPresented = true
                     } label: {
                         Image(systemName: "textformat")
                     }
-                    Button("Save") { save() }
                 }
             }
         }
+        .onDisappear { save() }
         .sheet(isPresented: $isStylePickerPresented) {
             CaptionStylePickerView(style: $viewModel.captionStyle)
                 .presentationDetents([.medium, .large])
@@ -173,7 +174,6 @@ struct CaptionEditorView: View {
             updated.script = script
             appState.updateProject(updated)
         }
-        dismiss()
     }
 }
 

@@ -35,7 +35,15 @@ struct VideoTrimView: View {
         }
         .navigationTitle("Trim Video")
         .navigationBarTitleDisplayMode(.inline)
-        .onDisappear { vm.teardown() }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                SaveStatusView(isSaving: false)
+            }
+        }
+        .onDisappear {
+            saveTrim()
+            vm.teardown()
+        }
     }
 
     // MARK: - Player
@@ -138,8 +146,8 @@ struct VideoTrimView: View {
 
             Spacer()
 
-            Button("Save Trim") {
-                saveAndDismiss()
+            Button("Done") {
+                dismiss()
             }
             .buttonStyle(.borderedProminent)
         }
@@ -157,12 +165,11 @@ struct VideoTrimView: View {
         return String(format: "%d:%02d.%d", m, s, ds)
     }
 
-    private func saveAndDismiss() {
+    private func saveTrim() {
         var updated = project
         guard var script = updated.script,
               let idx = script.sections.firstIndex(where: { $0.id == section.id }),
               var recording = script.sections[idx].recording else {
-            dismiss()
             return
         }
         recording.trimStartSeconds = vm.trimStart
@@ -170,7 +177,6 @@ struct VideoTrimView: View {
         script.sections[idx].recording = recording
         updated.script = script
         appState.updateProject(updated)
-        dismiss()
     }
 }
 

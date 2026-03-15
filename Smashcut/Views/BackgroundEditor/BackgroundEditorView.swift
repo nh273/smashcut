@@ -32,8 +32,6 @@ struct BackgroundEditorView: View {
                     processButton
                 }
 
-                saveDraftButton
-
                 if vm.isProcessing {
                     processingProgress
                 }
@@ -54,6 +52,16 @@ struct BackgroundEditorView: View {
         }
         .navigationTitle("Background Editor")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                SaveStatusView(isSaving: false)
+            }
+        }
+        .onDisappear {
+            saveSection()
+        }
+        .onChange(of: vm.backgroundImage) { _, _ in saveSection() }
+        .onChange(of: vm.backgroundVideoURL) { _, _ in saveSection() }
         .sheet(isPresented: $showingMediaPicker) {
             PhotosPicker(
                 selection: $pickerResult,
@@ -85,9 +93,6 @@ struct BackgroundEditorView: View {
             }
         }
         .animation(.easeInOut, value: showSaveSuccess)
-        .onChange(of: vm.draftSaved) { _, saved in
-            if saved { saveAndDismiss() }
-        }
     }
 
     private var sectionPreview: some View {
@@ -164,17 +169,6 @@ struct BackgroundEditorView: View {
         }
     }
 
-    private var saveDraftButton: some View {
-        Button {
-            Task { await vm.saveAsDraft() }
-        } label: {
-            Label("Save as Draft", systemImage: "tray.and.arrow.down")
-                .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.bordered)
-        .disabled(vm.isProcessing || vm.section.recording == nil)
-    }
-
     private var processButton: some View {
         Button {
             Task { await vm.processBackground() }
@@ -199,7 +193,7 @@ struct BackgroundEditorView: View {
             }
 
             Button {
-                saveAndDismiss()
+                dismiss()
             } label: {
                 Text("Done")
                     .frame(maxWidth: .infinity)
@@ -238,11 +232,6 @@ struct BackgroundEditorView: View {
             updated.script = script
         }
         appState.updateProject(updated)
-    }
-
-    private func saveAndDismiss() {
-        saveSection()
-        dismiss()
     }
 
     private func saveToCameraRoll(url: URL) async {
