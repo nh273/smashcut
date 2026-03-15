@@ -57,6 +57,12 @@ struct CaptionEditorView: View {
                                 onEndChanged: { newEnd in
                                     viewModel.adjustEnd(at: index, to: newEnd)
                                 },
+                                onVerticalPositionChanged: { newPos in
+                                    viewModel.setVerticalPosition(at: index, to: newPos)
+                                },
+                                onApplyPositionToAll: {
+                                    viewModel.applyVerticalPositionToAll(from: index)
+                                },
                                 onDelete: {
                                     viewModel.deleteChunk(at: index)
                                     if selectedChunkIndex == index { selectedChunkIndex = nil }
@@ -115,16 +121,59 @@ struct CaptionChunkRow: View {
     let onTap: () -> Void
     let onStartChanged: (Double) -> Void
     let onEndChanged: (Double) -> Void
+    let onVerticalPositionChanged: (Double) -> Void
+    let onApplyPositionToAll: () -> Void
     let onDelete: () -> Void
     let onAddAfter: () -> Void
 
     @State private var thumbnail: UIImage?
 
+    private let thumbnailHeight: CGFloat = 120
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Thumbnail with caption overlay
+            // Thumbnail with caption overlay at vertical position
             thumbnailView
                 .onTapGesture(perform: onTap)
+
+            // Vertical position slider
+            if isSelected {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Position")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(Int(chunk.verticalPosition * 100))%")
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.secondary)
+                        Slider(
+                            value: Binding(
+                                get: { chunk.verticalPosition },
+                                set: { onVerticalPositionChanged($0) }
+                            ),
+                            in: 0.05...0.95
+                        )
+                        Image(systemName: "arrow.down")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.secondary)
+                    }
+                    Button {
+                        onApplyPositionToAll()
+                    } label: {
+                        Label("Apply to All", systemImage: "rectangle.stack")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+                .padding(.horizontal, 4)
+            }
 
             // Timing labels
             HStack {
@@ -178,31 +227,40 @@ struct CaptionChunkRow: View {
 
     @ViewBuilder
     private var thumbnailView: some View {
-        ZStack {
-            if let thumbnail {
-                Image(uiImage: thumbnail)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: 80)
-                    .clipped()
-            } else {
-                Rectangle()
-                    .fill(Color(.systemGray5))
-                    .frame(height: 80)
-                    .overlay(
-                        ProgressView()
+        GeometryReader { geo in
+            let width = geo.size.width
+            ZStack(alignment: .topLeading) {
+                if let thumbnail {
+                    Image(uiImage: thumbnail)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: width, height: thumbnailHeight)
+                        .clipped()
+                } else {
+                    Rectangle()
+                        .fill(Color(.systemGray5))
+                        .frame(width: width, height: thumbnailHeight)
+                        .overlay(
+                            ProgressView()
+                        )
+                }
+
+                // Caption text positioned at verticalPosition
+                Text(chunk.text)
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.8), radius: 2)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .position(
+                        x: width / 2,
+                        y: thumbnailHeight * CGFloat(chunk.verticalPosition)
                     )
             }
-
-            Text(chunk.text)
-                .font(.caption.bold())
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.8), radius: 2)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
         }
+        .frame(height: thumbnailHeight)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)

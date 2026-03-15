@@ -46,6 +46,6 @@ struct CaptionTimestamp: Identifiable, Codable {
     var startSeconds: Double
     var endSeconds: Double
     /// Normalized vertical position from top (0 = top, 1 = bottom).
-    var verticalPosition: Double = 0.85
+    var verticalPosition: Double = 0.82
     var style: CaptionStyle = CaptionStyle()
 }

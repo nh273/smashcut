@@ -7,6 +7,8 @@ struct EditableCaptionChunk: Identifiable {
     var text: String
     var startSeconds: Double
     var endSeconds: Double
+    /// Normalized vertical position (0 = top, 1 = bottom).
+    var verticalPosition: Double = 0.82
 }
 
 @Observable
@@ -38,7 +40,8 @@ class CaptionEditorViewModel {
                     chunks.append(EditableCaptionChunk(
                         text: buffer.map(\.text).joined(separator: " "),
                         startSeconds: first.startSeconds,
-                        endSeconds: last.endSeconds
+                        endSeconds: last.endSeconds,
+                        verticalPosition: first.verticalPosition
                     ))
                 }
                 buffer = []
@@ -50,7 +53,8 @@ class CaptionEditorViewModel {
             chunks.append(EditableCaptionChunk(
                 text: buffer.map(\.text).joined(separator: " "),
                 startSeconds: first.startSeconds,
-                endSeconds: last.endSeconds
+                endSeconds: last.endSeconds,
+                verticalPosition: first.verticalPosition
             ))
         }
 
@@ -62,7 +66,8 @@ class CaptionEditorViewModel {
             CaptionTimestamp(
                 text: chunk.text,
                 startSeconds: chunk.startSeconds,
-                endSeconds: chunk.endSeconds
+                endSeconds: chunk.endSeconds,
+                verticalPosition: chunk.verticalPosition
             )
         }
     }
@@ -89,6 +94,19 @@ class CaptionEditorViewModel {
         chunks[index].endSeconds = end
     }
 
+    /// Set vertical position for a single chunk.
+    func setVerticalPosition(at index: Int, to position: Double) {
+        chunks[index].verticalPosition = min(max(position, 0), 1)
+    }
+
+    /// Apply the vertical position of the given chunk to all chunks.
+    func applyVerticalPositionToAll(from index: Int) {
+        let pos = chunks[index].verticalPosition
+        for i in chunks.indices {
+            chunks[i].verticalPosition = pos
+        }
+    }
+
     /// Delete the chunk at index.
     func deleteChunk(at index: Int) {
         chunks.remove(at: index)
@@ -107,12 +125,14 @@ class CaptionEditorViewModel {
         chunks[index] = EditableCaptionChunk(
             text: firstHalf.isEmpty ? chunk.text : firstHalf,
             startSeconds: chunk.startSeconds,
-            endSeconds: mid
+            endSeconds: mid,
+            verticalPosition: chunk.verticalPosition
         )
         chunks.insert(EditableCaptionChunk(
             text: secondHalf.isEmpty ? chunk.text : secondHalf,
             startSeconds: mid,
-            endSeconds: chunk.endSeconds
+            endSeconds: chunk.endSeconds,
+            verticalPosition: chunk.verticalPosition
         ), at: index + 1)
     }
 }
