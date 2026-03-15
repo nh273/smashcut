@@ -13,6 +13,8 @@ struct CaptionEditorView: View {
     @State private var player: AVPlayer?
     @State private var selectedChunkIndex: Int?
     @State private var isStylePickerPresented = false
+    @State private var currentPlaybackTime: Double = 0
+    @State private var timeObserver: Any?
 
     init(section: ScriptSection, project: Project) {
         self.section = section
@@ -30,6 +32,48 @@ struct CaptionEditorView: View {
                 VideoPlayer(player: player)
                     .frame(height: 220)
                     .background(Color.black)
+            }
+
+            // Scrubbable timeline bar
+            if !viewModel.chunks.isEmpty {
+                CaptionTimelineBar(
+                    chunks: viewModel.chunks,
+                    totalDuration: viewModel.totalDuration,
+                    currentTime: currentPlaybackTime,
+                    selectedChunkIndex: selectedChunkIndex,
+                    onSeek: { time in
+                        seekPlayer(to: time)
+                        currentPlaybackTime = time
+                    },
+                    onSelectChunk: { index in
+                        selectedChunkIndex = index
+                        seekPlayer(to: viewModel.chunks[index].startSeconds)
+                    }
+                )
+                .padding(.horizontal)
+                .padding(.vertical, 6)
+
+                // Linked/unlinked mode toggle
+                HStack {
+                    Button {
+                        viewModel.isLinkedMode.toggle()
+                    } label: {
+                        Label(
+                            viewModel.isLinkedMode ? "Linked" : "Unlinked",
+                            systemImage: viewModel.isLinkedMode ? "link" : "link.badge.plus"
+                        )
+                        .font(.caption)
+                        .foregroundStyle(viewModel.isLinkedMode ? Color.accentColor : Color.secondary)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    Text(viewModel.isLinkedMode ? "Adjacent captions share boundaries" : "Boundaries are independent")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 4)
             }
 
             if viewModel.chunks.isEmpty {
@@ -98,7 +142,18 @@ struct CaptionEditorView: View {
         }
         .onAppear {
             if let url = section.recording?.rawVideoURL {
-                player = AVPlayer(url: url)
+                let p = AVPlayer(url: url)
+                player = p
+                let interval = CMTime(seconds: 0.05, preferredTimescale: 600)
+                timeObserver = p.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
+                    currentPlaybackTime = time.seconds
+                }
+            }
+        }
+        .onDisappear {
+            if let observer = timeObserver {
+                player?.removeTimeObserver(observer)
+                timeObserver = nil
             }
         }
     }
@@ -210,7 +265,7 @@ struct CaptionChunkRow: View {
             // Action buttons
             HStack {
                 Button(action: onAddAfter) {
-                    Label("Add after", systemImage: "plus.circle")
+                    Label("Split Caption", systemImage: "scissors")
                         .font(.caption)
                 }
                 .buttonStyle(.bordered)
@@ -369,6 +424,75 @@ struct TimingScrubber: View {
             }
             .frame(height: barHeight)
             .coordinateSpace(name: "scrubber")
+        }
+        .frame(height: barHeight)
+    }
+}
+
+// MARK: - Caption Timeline Bar
+
+struct CaptionTimelineBar: View {
+    let chunks: [EditableCaptionChunk]
+    let totalDuration: Double
+    let currentTime: Double
+    let selectedChunkIndex: Int?
+    let onSeek: (Double) -> Void
+    let onSelectChunk: (Int) -> Void
+
+    private let barHeight: CGFloat = 36
+
+    var body: some View {
+        GeometryReader { geo in
+            let width = geo.size.width
+
+            ZStack(alignment: .leading) {
+                // Background track
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color(.systemGray6))
+                    .frame(height: barHeight)
+
+                // Caption chunk segments
+                ForEach(Array(chunks.enumerated()), id: \.element.id) { index, chunk in
+                    let startX = CGFloat(chunk.startSeconds / totalDuration) * width
+                    let endX = CGFloat(chunk.endSeconds / totalDuration) * width
+                    let segWidth = max(2, endX - startX)
+
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(selectedChunkIndex == index
+                              ? Color.accentColor.opacity(0.7)
+                              : Color.accentColor.opacity(0.3))
+                        .frame(width: segWidth, height: barHeight - 8)
+                        .offset(x: startX)
+                        .onTapGesture {
+                            onSelectChunk(index)
+                        }
+                }
+
+                // Playhead
+                let playheadX = CGFloat(currentTime / totalDuration) * width
+                RoundedRectangle(cornerRadius: 1)
+                    .fill(Color.white)
+                    .frame(width: 2, height: barHeight)
+                    .shadow(color: .black.opacity(0.5), radius: 1)
+                    .offset(x: playheadX - 1)
+
+                // Playhead knob
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 10, height: 10)
+                    .shadow(color: .black.opacity(0.3), radius: 2)
+                    .offset(x: playheadX - 5, y: -barHeight / 2 - 2)
+            }
+            .frame(height: barHeight)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .named("timeline"))
+                    .onChanged { value in
+                        let x = min(max(value.location.x, 0), width)
+                        onSeek(Double(x / width) * totalDuration)
+                    }
+            )
+            .coordinateSpace(name: "timeline")
         }
         .frame(height: barHeight)
     }

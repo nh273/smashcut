@@ -16,6 +16,8 @@ class CaptionEditorViewModel {
     var chunks: [EditableCaptionChunk]
     var totalDuration: Double
     var captionStyle: CaptionStyle
+    /// When true, adjusting a boundary also moves the adjacent chunk's boundary.
+    var isLinkedMode: Bool = true
 
     init(recording: Recording) {
         self.totalDuration = max(recording.durationSeconds, 1)
@@ -78,23 +80,41 @@ class CaptionEditorViewModel {
     // MARK: - Editing
 
     /// Adjust start of chunk at index, clamping against previous chunk's end.
+    /// In linked mode, also moves the previous chunk's end to match.
     func adjustStart(at index: Int, to newStart: Double) {
         var start = max(0, newStart)
-        if index > 0 {
-            start = max(start, chunks[index - 1].endSeconds + 0.05)
+        if isLinkedMode, index > 0 {
+            // Linked: move previous chunk's end to match, but enforce minimums
+            start = max(start, chunks[index - 1].startSeconds + 0.1)
+            start = min(start, chunks[index].endSeconds - 0.1)
+            chunks[index].startSeconds = start
+            chunks[index - 1].endSeconds = start
+        } else {
+            if index > 0 {
+                start = max(start, chunks[index - 1].endSeconds + 0.05)
+            }
+            start = min(start, chunks[index].endSeconds - 0.1)
+            chunks[index].startSeconds = start
         }
-        start = min(start, chunks[index].endSeconds - 0.1)
-        chunks[index].startSeconds = start
     }
 
     /// Adjust end of chunk at index, clamping against next chunk's start.
+    /// In linked mode, also moves the next chunk's start to match.
     func adjustEnd(at index: Int, to newEnd: Double) {
         var end = min(totalDuration, newEnd)
-        if index < chunks.count - 1 {
-            end = min(end, chunks[index + 1].startSeconds - 0.05)
+        if isLinkedMode, index < chunks.count - 1 {
+            // Linked: move next chunk's start to match, but enforce minimums
+            end = min(end, chunks[index + 1].endSeconds - 0.1)
+            end = max(end, chunks[index].startSeconds + 0.1)
+            chunks[index].endSeconds = end
+            chunks[index + 1].startSeconds = end
+        } else {
+            if index < chunks.count - 1 {
+                end = min(end, chunks[index + 1].startSeconds - 0.05)
+            }
+            end = max(end, chunks[index].startSeconds + 0.1)
+            chunks[index].endSeconds = end
         }
-        end = max(end, chunks[index].startSeconds + 0.1)
-        chunks[index].endSeconds = end
     }
 
     /// Set vertical position for a single chunk.
