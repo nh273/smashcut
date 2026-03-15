@@ -18,6 +18,7 @@ struct SectionRowView: View {
     @State private var navigateToRerecord = false
     @State private var navigateToExport = false
     @State private var navigateToReprocess = false
+    @State private var showRefineSheet = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -29,9 +30,18 @@ struct SectionRowView: View {
                 StatusBadge(status: section.status)
             }
 
-            Text(section.text)
-                .font(.body)
-                .lineLimit(3)
+            HStack(alignment: .top) {
+                Text(section.text)
+                    .font(.body)
+                    .lineLimit(3)
+                Spacer()
+                Button { showRefineSheet = true } label: {
+                    Image(systemName: "sparkles")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("refineSection_\(section.index)")
+            }
 
             HStack(spacing: 8) {
                 Spacer()
@@ -68,6 +78,9 @@ struct SectionRowView: View {
             isImporting = true
             Task { await importVideo(from: newItem) }
         }
+        .sheet(isPresented: $showRefineSheet) {
+            SectionRefineSheet(section: section, project: project)
+        }
     }
 
     @ViewBuilder
@@ -88,7 +101,7 @@ struct SectionRowView: View {
                             .tint(.primary)
                             .frame(width: 16, height: 16)
                     } else {
-                        Label("Import", systemImage: "photo.badge.plus")
+                        Label("Import Video", systemImage: "photo.badge.plus")
                             .font(.caption.bold())
                     }
                 }
@@ -111,7 +124,7 @@ struct SectionRowView: View {
                 .buttonStyle(.bordered)
 
                 Button { navigateToBackground = true } label: {
-                    Label("Background", systemImage: "photo")
+                    Label("Set Backdrop", systemImage: "photo")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)

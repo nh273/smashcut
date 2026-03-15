@@ -87,6 +87,65 @@ actor ClaudeService {
         return ScriptResult(refinedScript: textContent, sections: [textContent])
     }
 
+    func refineSectionText(currentText: String, direction: String) async throws -> String {
+        guard let apiKey = KeychainService.shared.retrieveAPIKey() else {
+            throw ClaudeError.noAPIKey
+        }
+
+        let systemPrompt = """
+        You are a script writing assistant for short-form video narration.
+        Given a single script section and an optional refinement direction, \
+        rewrite it to be clearer, more engaging, and suitable for a single take recording (2-4 sentences).
+
+        Respond ONLY with the refined section text — no JSON, no explanation, just the text.
+        """
+
+        let userMessage = direction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "Refine this script section:\n\n\(currentText)"
+            : "Refine this script section with this direction: \(direction)\n\nCurrent text:\n\n\(currentText)"
+
+        let requestBody: [String: Any] = [
+            "model": model,
+            "max_tokens": 1024,
+            "system": systemPrompt,
+            "messages": [
+                ["role": "user", "content": userMessage]
+            ]
+        ]
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            if let body = String(data: data, encoding: .utf8) {
+                throw ClaudeError.apiError("Status \((response as? HTTPURLResponse)?.statusCode ?? 0): \(body)")
+            }
+            throw ClaudeError.apiError("Request failed")
+        }
+
+        struct ClaudeAPIResponse: Codable {
+            struct Content: Codable {
+                let type: String
+                let text: String
+            }
+            let content: [Content]
+        }
+
+        let claudeResponse = try JSONDecoder().decode(ClaudeAPIResponse.self, from: data)
+        guard let textContent = claudeResponse.content.first(where: { $0.type == "text" })?.text else {
+            throw ClaudeError.invalidResponse
+        }
+
+        return textContent.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     enum ClaudeError: LocalizedError {
         case noAPIKey
         case apiError(String)

@@ -65,11 +65,16 @@ struct SectionManagerView: View {
     @ViewBuilder
     private var mediaSection: some View {
         Section {
+            Text("Shared assets available across all sections")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .listRowSeparator(.hidden)
+
             if currentProject.linkedMediaIDs.isEmpty {
                 Button {
                     showMediaPicker = true
                 } label: {
-                    Label("Add from Camera Roll", systemImage: "photo.on.rectangle.angled")
+                    Label("Add Project Media", systemImage: "photo.on.rectangle.angled")
                 }
             } else {
                 LazyVGrid(
@@ -93,7 +98,7 @@ struct SectionManagerView: View {
             }
         } header: {
             HStack {
-                Text("Media")
+                Text("Project Media")
                 Spacer()
                 Button {
                     showMediaPicker = true
