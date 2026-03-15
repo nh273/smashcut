@@ -53,3 +53,15 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: Smashcut
+
+  SmashcutUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SmashcutUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nh273.smashcut.uitests
+    dependencies:
+      - target: Smashcut

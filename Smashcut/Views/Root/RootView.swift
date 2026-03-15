@@ -15,6 +15,7 @@ struct RootView: View {
                         } label: {
                             Image(systemName: "gear")
                         }
+                        .accessibilityIdentifier("settingsButton")
                     }
                 }
         }

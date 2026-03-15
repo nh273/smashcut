@@ -16,6 +16,7 @@ struct ProjectListView: View {
                 } actions: {
                     Button("New Project") { showingNewProject = true }
                         .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier("newProjectButton")
                 }
             } else {
                 List {
@@ -93,10 +94,12 @@ struct NewProjectSheet: View {
             List {
                 Section("Project Title") {
                     TextField("e.g. My Product Demo", text: $title)
+                        .accessibilityIdentifier("projectTitleField")
                 }
                 Section {
                     TextField("Describe what you want to talk about…", text: $idea, axis: .vertical)
                         .lineLimit(4...12)
+                        .accessibilityIdentifier("scriptIdeaField")
                 } header: {
                     Text("Script Idea")
                 } footer: {
@@ -115,6 +118,7 @@ struct NewProjectSheet: View {
                         navigateToWorkshop = true
                     }
                     .disabled(idea.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .accessibilityIdentifier("nextButton")
                 }
             }
             // Project is NOT created here — ScriptWorkshopView creates it only on accept.

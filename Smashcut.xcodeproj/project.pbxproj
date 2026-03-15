@@ -53,6 +53,7 @@
 		E0FC4FCF868E8CAC2876F548 /* BackgroundEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */; };
 		E375BF3CFF988233B7B37FFE /* CompositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDAD59278852C474F520D61 /* CompositionService.swift */; };
 		E62166F1006F58988D107EDC /* ScriptWorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */; };
+		E657DEBD3DFBD46C83F1509D /* SmashcutUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885381FA485B0F77317D80FE /* SmashcutUITests.swift */; };
 		FDE0356E0B58313259A3407A /* BackgroundEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE3BC3156EAD8990451B89E /* BackgroundEditorView.swift */; };
 		FF0374109B30A9687748CE7F /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86F417E05A8E5A798DBED4A /* CameraService.swift */; };
 		A1B2C3D40A50D07E6DFC6FD1 /* LiveCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* LiveCompositor.swift */; };
@@ -62,6 +63,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		42A5FA264A2D2BEF9904AABF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0523F771CAE0977F642BC5E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 627726ABAF6E99865C147D12;
+			remoteInfo = Smashcut;
+		};
+		AF8E5941B997B40F3C5C7E2B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0523F771CAE0977F642BC5E1 /* Project object */;
 			proxyType = 1;
@@ -80,6 +88,7 @@
 		1AE6C49CCAAC0BBB987BC35F /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		1C48C0C978D4E682DD1990E8 /* VideoTrimViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTrimViewModel.swift; sourceTree = "<group>"; };
 		25D925153B13AF56798C9238 /* TeleprompterOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleprompterOverlayView.swift; sourceTree = "<group>"; };
+		2F53B70ABA018FBDD28FCFD0 /* SmashcutUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SmashcutUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		304B5F51DE42F20C3783EA06 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		3ABE349CC1FAD1FB3557B1F6 /* APIKeySetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeySetupView.swift; sourceTree = "<group>"; };
 		3DFC52192EEB8AA6138CF828 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -96,6 +105,7 @@
 		77C2FE165C3ED04A4C9CA4C1 /* Script.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Script.swift; sourceTree = "<group>"; };
 		795BDF1C12F4D92D82B2F265 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
 		7DD7495E4684EF3C3305CD21 /* SmashcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmashcutTests.swift; sourceTree = "<group>"; };
+		885381FA485B0F77317D80FE /* SmashcutUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmashcutUITests.swift; sourceTree = "<group>"; };
 		889260E0CB89572D25BACEB8 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		8BF4DE3F9CF9A956B4ECF63A /* ScriptWorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptWorkshopView.swift; sourceTree = "<group>"; };
 		936090D14784DF5839AAF574 /* TimingUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingUtilities.swift; sourceTree = "<group>"; };
@@ -186,6 +196,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		2D6B52C667207B65E4744170 /* SmashcutUITests */ = {
+			isa = PBXGroup;
+			children = (
+				885381FA485B0F77317D80FE /* SmashcutUITests.swift */,
+			);
+			path = SmashcutUITests;
+			sourceTree = "<group>";
+		};
 		2E47DD375A42AC68501F1E0E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -216,6 +234,7 @@
 			children = (
 				08E23A30724C71C33BBB3A24 /* Smashcut */,
 				69BF89B6FFF33F1C3188BA8D /* SmashcutTests */,
+				2D6B52C667207B65E4744170 /* SmashcutUITests */,
 				65CDFF00FCB989A55C6130D8 /* Frameworks */,
 				8179CD251CE277EDE6998953 /* Products */,
 			);
@@ -277,6 +296,7 @@
 			children = (
 				5786320696A6CA458A3798E6 /* Smashcut.app */,
 				5CB0BAD7165C660B180A8653 /* SmashcutTests.xctest */,
+				2F53B70ABA018FBDD28FCFD0 /* SmashcutUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -391,6 +411,24 @@
 			productReference = 5CB0BAD7165C660B180A8653 /* SmashcutTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		55953602E04EC55B144CC77D /* SmashcutUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65D09C01E350833E255B51A6 /* Build configuration list for PBXNativeTarget "SmashcutUITests" */;
+			buildPhases = (
+				466CFEC297E3C4D0A511672F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B569F5F9021B7AE3BA38318B /* PBXTargetDependency */,
+			);
+			name = SmashcutUITests;
+			packageProductDependencies = (
+			);
+			productName = SmashcutUITests;
+			productReference = 2F53B70ABA018FBDD28FCFD0 /* SmashcutUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		627726ABAF6E99865C147D12 /* Smashcut */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 494452D0D079ED4228B93715 /* Build configuration list for PBXNativeTarget "Smashcut" */;
@@ -421,6 +459,10 @@
 					514864418FE2A4AC16391CFE = {
 						DevelopmentTeam = "";
 					};
+					55953602E04EC55B144CC77D = {
+						DevelopmentTeam = "";
+						TestTargetID = 627726ABAF6E99865C147D12;
+					};
 					627726ABAF6E99865C147D12 = {
 						DevelopmentTeam = "";
 					};
@@ -442,6 +484,7 @@
 			targets = (
 				627726ABAF6E99865C147D12 /* Smashcut */,
 				514864418FE2A4AC16391CFE /* SmashcutTests */,
+				55953602E04EC55B144CC77D /* SmashcutUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -500,6 +543,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		466CFEC297E3C4D0A511672F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E657DEBD3DFBD46C83F1509D /* SmashcutUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D948FF869A69B5906D48A6EB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -515,6 +566,11 @@
 			isa = PBXTargetDependency;
 			target = 627726ABAF6E99865C147D12 /* Smashcut */;
 			targetProxy = 42A5FA264A2D2BEF9904AABF /* PBXContainerItemProxy */;
+		};
+		B569F5F9021B7AE3BA38318B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 627726ABAF6E99865C147D12 /* Smashcut */;
+			targetProxy = AF8E5941B997B40F3C5C7E2B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -537,6 +593,23 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		5A7FAAD6B20DCD14ECBB285C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nh273.smashcut.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Smashcut;
+			};
+			name = Debug;
 		};
 		65342BE8834694B5861F2500 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -657,6 +730,23 @@
 			};
 			name = Debug;
 		};
+		C7F6D6817CFD8758784FBA8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nh273.smashcut.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Smashcut;
+			};
+			name = Release;
+		};
 		E87BB977CC70AE93C38F7436 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -722,6 +812,15 @@
 			buildConfigurations = (
 				B1E74364D3F811DADD84CB54 /* Debug */,
 				334B9513B599F972D06FA490 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		65D09C01E350833E255B51A6 /* Build configuration list for PBXNativeTarget "SmashcutUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5A7FAAD6B20DCD14ECBB285C /* Debug */,
+				C7F6D6817CFD8758784FBA8B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -80,6 +80,7 @@ struct SectionRowView: View {
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("recordButton_\(section.index)")
 
                 PhotosPicker(selection: $importItem, matching: .videos) {
                     if isImporting {

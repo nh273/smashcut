@@ -47,6 +47,7 @@ struct ScriptRefinementView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("acceptButton")
             .padding(.top, 8)
         }
     }

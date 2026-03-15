@@ -42,6 +42,7 @@ struct ScriptWorkshopView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("refineButton")
                 }
 
                 if vm.isRefining {

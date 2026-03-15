@@ -14,7 +14,16 @@ struct VideoTrimView: View {
     init(section: ScriptSection, project: Project) {
         self.section = section
         self.project = project
-        _vm = State(initialValue: VideoTrimViewModel(recording: section.recording!))
+        if let recording = section.recording {
+            _vm = State(initialValue: VideoTrimViewModel(recording: recording))
+        } else {
+            // Defensive: create a dummy VM to avoid crash.
+            // The guard in SectionRowView should prevent reaching here.
+            _vm = State(initialValue: VideoTrimViewModel(recording: Recording(
+                sectionID: section.id,
+                rawVideoURL: URL(fileURLWithPath: "/dev/null")
+            )))
+        }
     }
 
     var body: some View {

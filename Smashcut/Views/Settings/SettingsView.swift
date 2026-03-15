@@ -14,6 +14,7 @@ struct SettingsView: View {
                     SecureField("sk-ant-...", text: $apiKey)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
+                        .accessibilityIdentifier("apiKeyField")
                 } header: {
                     Text("Anthropic API Key")
                 } footer: {
