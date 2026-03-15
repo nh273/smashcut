@@ -24,9 +24,10 @@ struct CaptionColor: Codable, Equatable {
     static let white = CaptionColor(red: 1, green: 1, blue: 1, alpha: 1)
     static let black = CaptionColor(red: 0, green: 0, blue: 0, alpha: 1)
     static let yellow = CaptionColor(red: 1, green: 1, blue: 0, alpha: 1)
+    static let cyan = CaptionColor(red: 0, green: 1, blue: 1, alpha: 1)
 }
 
-enum ContrastMode: String, Codable {
+enum ContrastMode: String, Codable, CaseIterable {
     case none
     case stroke
     case highlight

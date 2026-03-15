@@ -37,6 +37,7 @@
 		96F072D07A3A44765EDBC774 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65751FB53EC3045B46241A2B /* RecordingService.swift */; };
 		971D68D2A6EDD5E8F484FB8B /* VideoTrimViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C48C0C978D4E682DD1990E8 /* VideoTrimViewModel.swift */; };
 		98C823F267E631D37FEE5D85 /* CaptionEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D46BC10B8500928036D0E8 /* CaptionEditorView.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* CaptionStylePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3A4B5C6071829304152 /* CaptionStylePickerView.swift */; };
 		98E9AFA9B225F128324EB523 /* ScriptWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF4DE3F9CF9A956B4ECF63A /* ScriptWorkshopView.swift */; };
 		A33D1A1C91C6C42625EDAA7E /* SegmentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12165C763B0D91C64F2E4D7F /* SegmentBlockView.swift */; };
 		A486B2E537367834FD97B92A /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5065C837B74C92995824036 /* ProjectListView.swift */; };
@@ -81,6 +82,7 @@
 		3DFC52192EEB8AA6138CF828 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		450DCE75F03AA9ACFC962622 /* Vision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vision.framework; path = System/Library/Frameworks/Vision.framework; sourceTree = SDKROOT; };
 		51D46BC10B8500928036D0E8 /* CaptionEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionEditorView.swift; sourceTree = "<group>"; };
+		D1E2F3A4B5C6071829304152 /* CaptionStylePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionStylePickerView.swift; sourceTree = "<group>"; };
 		55D9468AA540621FD76F215B /* LayerAssetCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerAssetCache.swift; sourceTree = "<group>"; };
 		5786320696A6CA458A3798E6 /* Smashcut.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Smashcut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59ACA78F4BFC011428502557 /* VideoFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFileManager.swift; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 			isa = PBXGroup;
 			children = (
 				51D46BC10B8500928036D0E8 /* CaptionEditorView.swift */,
+				D1E2F3A4B5C6071829304152 /* CaptionStylePickerView.swift */,
 			);
 			path = CaptionEditor;
 			sourceTree = "<group>";
@@ -438,6 +441,7 @@
 				C6B351131B79359DBE5FF67E /* CameraPreviewView.swift in Sources */,
 				FF0374109B30A9687748CE7F /* CameraService.swift in Sources */,
 				98C823F267E631D37FEE5D85 /* CaptionEditorView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* CaptionStylePickerView.swift in Sources */,
 				4D6C2C36F646A05A15634E62 /* CaptionEditorViewModel.swift in Sources */,
 				AE80D20ED65C867FC83E3432 /* CaptionExportView.swift in Sources */,
 				30CD376049EC72EB181CE3BE /* ClaudeService.swift in Sources */,

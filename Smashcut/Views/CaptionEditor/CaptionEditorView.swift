@@ -12,6 +12,7 @@ struct CaptionEditorView: View {
     @State private var viewModel: CaptionEditorViewModel
     @State private var player: AVPlayer?
     @State private var selectedChunkIndex: Int?
+    @State private var isStylePickerPresented = false
 
     init(section: ScriptSection, project: Project) {
         self.section = section
@@ -80,9 +81,20 @@ struct CaptionEditorView: View {
         .navigationTitle("Edit Captions")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Save") { save() }
+            ToolbarItem(placement: .primaryAction) {
+                HStack(spacing: 12) {
+                    Button {
+                        isStylePickerPresented = true
+                    } label: {
+                        Image(systemName: "textformat")
+                    }
+                    Button("Save") { save() }
+                }
             }
+        }
+        .sheet(isPresented: $isStylePickerPresented) {
+            CaptionStylePickerView(style: $viewModel.captionStyle)
+                .presentationDetents([.medium, .large])
         }
         .onAppear {
             if let url = section.recording?.rawVideoURL {

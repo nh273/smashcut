@@ -15,10 +15,12 @@ struct EditableCaptionChunk: Identifiable {
 class CaptionEditorViewModel {
     var chunks: [EditableCaptionChunk]
     var totalDuration: Double
+    var captionStyle: CaptionStyle
 
     init(recording: Recording) {
         self.totalDuration = max(recording.durationSeconds, 1)
         self.chunks = CaptionEditorViewModel.buildChunks(from: recording.captionTimestamps)
+        self.captionStyle = recording.captionTimestamps.first?.style ?? CaptionStyle()
     }
 
     // MARK: - Chunk conversion
@@ -67,7 +69,8 @@ class CaptionEditorViewModel {
                 text: chunk.text,
                 startSeconds: chunk.startSeconds,
                 endSeconds: chunk.endSeconds,
-                verticalPosition: chunk.verticalPosition
+                verticalPosition: chunk.verticalPosition,
+                style: captionStyle
             )
         }
     }
