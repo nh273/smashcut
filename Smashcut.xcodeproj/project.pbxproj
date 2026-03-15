@@ -55,6 +55,9 @@
 		E62166F1006F58988D107EDC /* ScriptWorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */; };
 		FDE0356E0B58313259A3407A /* BackgroundEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE3BC3156EAD8990451B89E /* BackgroundEditorView.swift */; };
 		FF0374109B30A9687748CE7F /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B86F417E05A8E5A798DBED4A /* CameraService.swift */; };
+		A1B2C3D40A50D07E6DFC6FD1 /* LiveCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* LiveCompositor.swift */; };
+		B2C3D4E50A50D07E6DFC6FD2 /* SegmentEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* SegmentEditViewModel.swift */; };
+		C3D4E5F60A50D07E6DFC6FD3 /* SegmentEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* SegmentEditView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -119,6 +122,9 @@
 		F5CE5CC959161B6D4873C8D3 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		FBC9AEABF278990AFCE56D31 /* TrimTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimTimelineView.swift; sourceTree = "<group>"; };
 		FD757B447762463FBB026209 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* LiveCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCompositor.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6A7B8C9D0E1F2A3 /* SegmentEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentEditViewModel.swift; sourceTree = "<group>"; };
+		C3D4E5F6A7B8C9D0E1F2A3B4 /* SegmentEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentEditView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +203,7 @@
 				6DDAD59278852C474F520D61 /* CompositionService.swift */,
 				9B731406C3E967F6D202DA7E /* KeychainService.swift */,
 				55D9468AA540621FD76F215B /* LayerAssetCache.swift */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* LiveCompositor.swift */,
 				65751FB53EC3045B46241A2B /* RecordingService.swift */,
 				BF0FDF7FC200D3879420288B /* SegmentationService.swift */,
 				B09B51D4EFF9DA8773DDFDC8 /* ThumbnailService.swift */,
@@ -220,6 +227,7 @@
 				BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */,
 				0115789DDD25F51BA0933559 /* CaptionEditorViewModel.swift */,
 				AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */,
+				B2C3D4E5F6A7B8C9D0E1F2A3 /* SegmentEditViewModel.swift */,
 				B6FBDEB05372D67248D3E238 /* TeleprompterRecordingViewModel.swift */,
 				D833E3191B9A2C338241AAE4 /* TimelineViewModel.swift */,
 				1C48C0C978D4E682DD1990E8 /* VideoTrimViewModel.swift */,
@@ -291,12 +299,21 @@
 				882ACED5EBD4641C088BFB6F /* Root */,
 				C822472C4DDEA04DA295A0C4 /* ScriptWorkshop */,
 				9A473D49581653CF935659CF /* SectionManager */,
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* SegmentEdit */,
 				2E47DD375A42AC68501F1E0E /* Settings */,
 				1F6877C003A8B77285AF47EA /* TeleprompterRecording */,
 				21F0ADDBED2C8555F17BD69C /* Timeline */,
 				A90EEEA9EBDAEE0268887FDD /* VideoTrim */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* SegmentEdit */ = {
+			isa = PBXGroup;
+			children = (
+				C3D4E5F6A7B8C9D0E1F2A3B4 /* SegmentEditView.swift */,
+			);
+			path = SegmentEdit;
 			sourceTree = "<group>";
 		};
 		9A473D49581653CF935659CF /* SectionManager */ = {
@@ -448,6 +465,7 @@
 				E375BF3CFF988233B7B37FFE /* CompositionService.swift in Sources */,
 				7A8EA5E2AE17DAF5D846113D /* KeychainService.swift in Sources */,
 				BE4C578A6EBAF213CD7BAD94 /* LayerAssetCache.swift in Sources */,
+				A1B2C3D40A50D07E6DFC6FD1 /* LiveCompositor.swift in Sources */,
 				3490F6CF891EF4315FF04EA9 /* MediaPickerView.swift in Sources */,
 				4C31215EC8DF577D0923D1DC /* Project.swift in Sources */,
 				A486B2E537367834FD97B92A /* ProjectListView.swift in Sources */,
@@ -462,6 +480,8 @@
 				069BDEBA83C692871BCA7CEA /* SectionManagerView.swift in Sources */,
 				79133D9F589156CFC3D8E481 /* SectionRowView.swift in Sources */,
 				A33D1A1C91C6C42625EDAA7E /* SegmentBlockView.swift in Sources */,
+				C3D4E5F60A50D07E6DFC6FD3 /* SegmentEditView.swift in Sources */,
+				B2C3D4E50A50D07E6DFC6FD2 /* SegmentEditViewModel.swift in Sources */,
 				5951D5BBA48ED64ED3F56BF3 /* SegmentationService.swift in Sources */,
 				7E131FBF5E8A3ADFC60059FF /* SettingsView.swift in Sources */,
 				D64F9DD1D6463D71C90CA841 /* SmashcutApp.swift in Sources */,

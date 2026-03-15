@@ -62,6 +62,10 @@ struct Layer: Identifiable, Codable {
     var cacheState: CacheState = .none
     /// Time offset of this layer from the start of its segment (seconds).
     var startOffset: Double = 0
+    /// Border width in points (rendered by compositor).
+    var borderWidth: Double = 0
+    /// Corner radius in points (rendered by compositor).
+    var cornerRadius: Double = 0
 
     init(
         type: LayerType,
@@ -75,7 +79,9 @@ struct Layer: Identifiable, Codable {
         hasBackgroundRemoval: Bool = false,
         cachedProcessedURL: URL? = nil,
         cacheState: CacheState = .none,
-        startOffset: Double = 0
+        startOffset: Double = 0,
+        borderWidth: Double = 0,
+        cornerRadius: Double = 0
     ) {
         self.type = type
         self.sourceURL = sourceURL
@@ -89,6 +95,8 @@ struct Layer: Identifiable, Codable {
         self.cachedProcessedURL = cachedProcessedURL
         self.cacheState = cacheState
         self.startOffset = startOffset
+        self.borderWidth = borderWidth
+        self.cornerRadius = cornerRadius
     }
 
     /// Whether this layer needs expensive pre-rendering (background removal).
