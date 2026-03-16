@@ -13,7 +13,7 @@ struct SegmentBlockView: View {
     let onReorder: (ReorderDirection) -> Void
     let onEditTap: () -> Void
 
-    @State private var thumbnail: UIImage?
+    @State private var filmstripFrames: [UIImage] = []
     @GestureState private var durationDragDelta: CGFloat = 0
 
     private var displayWidth: CGFloat {
@@ -88,18 +88,12 @@ struct SegmentBlockView: View {
         }
     }
 
-    // MARK: - Thumbnail
+    // MARK: - Filmstrip Thumbnail Header
 
     @ViewBuilder
     private var thumbnailHeader: some View {
         ZStack(alignment: .bottomLeading) {
-            if let thumb = thumbnail {
-                Image(uiImage: thumb)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: 40)
-                    .clipped()
-            } else {
+            if filmstripFrames.isEmpty {
                 Color(UIColor.systemGray5)
                     .frame(height: 40)
                     .overlay {
@@ -107,6 +101,22 @@ struct SegmentBlockView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(.secondary)
                     }
+            } else {
+                GeometryReader { geo in
+                    HStack(spacing: 0) {
+                        ForEach(Array(filmstripFrames.enumerated()), id: \.offset) { _, frame in
+                            Image(uiImage: frame)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(
+                                    width: geo.size.width / CGFloat(filmstripFrames.count),
+                                    height: 40
+                                )
+                                .clipped()
+                        }
+                    }
+                }
+                .frame(height: 40)
             }
 
             Text("Seg \(segmentIndex + 1)")
@@ -119,7 +129,7 @@ struct SegmentBlockView: View {
                 .padding(2)
         }
         .clipShape(RoundedRectangle(cornerRadius: 4))
-        .task { await loadThumbnail() }
+        .task(id: segment.duration) { await loadFilmstrip() }
     }
 
     // MARK: - Duration Handle
@@ -145,15 +155,27 @@ struct SegmentBlockView: View {
             )
     }
 
-    // MARK: - Thumbnail Loading
+    // MARK: - Filmstrip Loading
 
-    private func loadThumbnail() async {
+    private func loadFilmstrip() async {
         guard let videoLayer = segment.layers.first(where: { $0.type == .video }),
               let url = videoLayer.sourceURL
         else { return }
-        if let data = await ThumbnailService.generateThumbnail(from: url) {
-            thumbnail = UIImage(data: data)
+
+        // Check cache first
+        if let cached = await FilmstripCache.shared.thumbnails(for: url, duration: segment.duration) {
+            filmstripFrames = cached
+            return
         }
+
+        let frames = await ThumbnailService.generateFilmstripThumbnails(
+            from: url,
+            duration: segment.duration
+        )
+        guard !frames.isEmpty else { return }
+
+        await FilmstripCache.shared.store(frames, for: url, duration: segment.duration)
+        filmstripFrames = frames
     }
 }
 
