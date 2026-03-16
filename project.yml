@@ -11,6 +11,11 @@ settings:
     SWIFT_VERSION: "5.9"
     DEVELOPMENT_TEAM: ""  # Set your team in Xcode: Smashcut target → Signing & Capabilities
 
+packages:
+  Cabbage:
+    url: https://github.com/VideoFlint/Cabbage.git
+    from: "0.4.2"
+
 targets:
   Smashcut:
     type: application
@@ -40,6 +45,7 @@ targets:
       - sdk: Vision.framework
       - sdk: Photos.framework
       - sdk: CoreImage.framework
+      - package: Cabbage
 
   SmashcutTests:
     type: bundle.unit-test
