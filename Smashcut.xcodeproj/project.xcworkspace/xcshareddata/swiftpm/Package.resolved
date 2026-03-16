@@ -1,0 +1,15 @@
+{
+  "originHash" : "91e6e9b11b052061e08f98a7000d2ac4a2658426c508f0c77091e7d6ac89265a",
+  "pins" : [
+    {
+      "identity" : "cabbage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VideoFlint/Cabbage.git",
+      "state" : {
+        "revision" : "c8f72a0c087b642947c4f12e79c2d3cd396871a6",
+        "version" : "0.5.1"
+      }
+    }
+  ],
+  "version" : 3
+}
