@@ -90,7 +90,6 @@ struct SectionRowView: View {
             HStack(spacing: 8) {
                 Button { navigateToRecord = true } label: {
                     Label("Record", systemImage: "record.circle")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
                 .accessibilityIdentifier("recordButton_\(section.index)")
@@ -102,70 +101,67 @@ struct SectionRowView: View {
                             .frame(width: 16, height: 16)
                     } else {
                         Label("Import Video", systemImage: "photo.badge.plus")
-                            .font(.caption.bold())
                     }
                 }
                 .buttonStyle(.bordered)
                 .disabled(isImporting)
             }
+            .labelStyle(.titleAndIcon)
+            .font(.subheadline)
 
         case .recorded:
-            HStack {
+            FlowLayout(spacing: 8) {
                 Button { navigateToCaptionEditor = true } label: {
                     Label("Edit Captions", systemImage: "captions.bubble")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
 
                 Button { navigateToTrim = true } label: {
                     Label("Trim", systemImage: "scissors")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
                 Button { navigateToBackground = true } label: {
                     Label("Set Backdrop", systemImage: "photo")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
                 Button { navigateToRerecord = true } label: {
                     Label("Re-record", systemImage: "arrow.clockwise")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
             }
+            .labelStyle(.titleAndIcon)
+            .font(.subheadline)
 
         case .processed:
-            HStack {
+            FlowLayout(spacing: 8) {
                 Button { navigateToCaptionEditor = true } label: {
                     Label("Edit Captions", systemImage: "captions.bubble")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
                 Button { navigateToExport = true } label: {
                     Label("Export", systemImage: "square.and.arrow.up")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
 
                 Button { navigateToTrim = true } label: {
                     Label("Trim", systemImage: "scissors")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
 
                 Button { navigateToReprocess = true } label: {
                     Label("Re-process", systemImage: "arrow.clockwise")
-                        .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
             }
+            .labelStyle(.titleAndIcon)
+            .font(.subheadline)
 
         case .exported:
             Label("Exported", systemImage: "checkmark.circle.fill")
-                .font(.caption.bold())
+                .font(.subheadline)
                 .foregroundStyle(.green)
         }
     }
