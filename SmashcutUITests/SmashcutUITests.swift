@@ -226,4 +226,123 @@ final class SmashcutUITests: XCTestCase {
             "Timeline view should show Save button"
         )
     }
+
+    // MARK: - Flow 5: Caption Editor UI (sm-59lj)
+
+    func testCaptionEditorAppears() {
+        let projectCell = app.cells.firstMatch
+        guard projectCell.waitForExistence(timeout: 3) else { return }
+        projectCell.tap()
+
+        // Tap Edit Captions on Section 1 (only available when section is recorded)
+        let editCaptions = app.buttons["Edit Captions"]
+        guard editCaptions.waitForExistence(timeout: 5) else {
+            // Section not recorded — skip
+            return
+        }
+        editCaptions.tap()
+
+        // Caption editor should show nav title
+        XCTAssertTrue(
+            app.staticTexts["Edit Captions"].waitForExistence(timeout: 5),
+            "Caption editor screen should appear"
+        )
+    }
+
+    func testCaptionEditorLinkedToggle() {
+        let projectCell = app.cells.firstMatch
+        guard projectCell.waitForExistence(timeout: 3) else { return }
+        projectCell.tap()
+
+        let editCaptions = app.buttons["Edit Captions"]
+        guard editCaptions.waitForExistence(timeout: 5) else { return }
+        editCaptions.tap()
+
+        // Linked toggle should exist
+        let linkedButton = app.buttons["Linked"]
+        XCTAssertTrue(
+            linkedButton.waitForExistence(timeout: 5),
+            "Linked toggle should exist in caption editor"
+        )
+    }
+
+    func testCaptionEditorSplitCaptionButton() {
+        let projectCell = app.cells.firstMatch
+        guard projectCell.waitForExistence(timeout: 3) else { return }
+        projectCell.tap()
+
+        let editCaptions = app.buttons["Edit Captions"]
+        guard editCaptions.waitForExistence(timeout: 5) else { return }
+        editCaptions.tap()
+
+        // Split Caption button should exist
+        let splitButton = app.buttons["Split Caption"]
+        XCTAssertTrue(
+            splitButton.waitForExistence(timeout: 5),
+            "Split Caption button should exist"
+        )
+    }
+
+    func testCaptionEditorTextFormattingButton() {
+        let projectCell = app.cells.firstMatch
+        guard projectCell.waitForExistence(timeout: 3) else { return }
+        projectCell.tap()
+
+        let editCaptions = app.buttons["Edit Captions"]
+        guard editCaptions.waitForExistence(timeout: 5) else { return }
+        editCaptions.tap()
+
+        // Text formatting button should exist
+        let formatButton = app.buttons["textformat"]
+        XCTAssertTrue(
+            formatButton.waitForExistence(timeout: 5),
+            "Text formatting button should exist"
+        )
+    }
+
+    func testCaptionEditorPositionControl() {
+        let projectCell = app.cells.firstMatch
+        guard projectCell.waitForExistence(timeout: 3) else { return }
+        projectCell.tap()
+
+        let editCaptions = app.buttons["Edit Captions"]
+        guard editCaptions.waitForExistence(timeout: 5) else { return }
+        editCaptions.tap()
+
+        // Position label may need scrolling to be visible
+        let positionLabel = app.staticTexts["Position"]
+        if !positionLabel.waitForExistence(timeout: 3) {
+            app.swipeUp()
+        }
+        XCTAssertTrue(
+            positionLabel.waitForExistence(timeout: 5),
+            "Position control should exist in caption editor"
+        )
+    }
+
+    // MARK: - Flow 6: Section Refine (sm-otfs)
+
+    func testSectionRefineSheetAppears() {
+        let projectCell = app.cells.firstMatch
+        guard projectCell.waitForExistence(timeout: 3) else { return }
+        projectCell.tap()
+
+        let refineButton = app.buttons["refineSection_0"]
+        guard refineButton.waitForExistence(timeout: 5) else {
+            let refineButton1 = app.buttons["refineSection_1"]
+            guard refineButton1.waitForExistence(timeout: 3) else { return }
+            refineButton1.tap()
+            XCTAssertTrue(
+                app.staticTexts["Refine Section 2"].waitForExistence(timeout: 5),
+                "Refine sheet should appear"
+            )
+            return
+        }
+        refineButton.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Refine Section 1"].waitForExistence(timeout: 5),
+            "Refine sheet should appear"
+        )
+    }
 }
