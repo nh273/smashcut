@@ -9,6 +9,7 @@ struct TeleprompterRecordingView: View {
     let project: Project
 
     @State private var vm: TeleprompterRecordingViewModel
+    @State private var dragOffset: CGFloat = 0
 
     init(section: ScriptSection, project: Project) {
         self.section = section
@@ -63,14 +64,7 @@ struct TeleprompterRecordingView: View {
 
                 // Controls
                 HStack(spacing: 32) {
-                    Button {
-                        vm.teardown()
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 40))
-                            .foregroundStyle(.white.opacity(0.8))
-                    }
+                    closeButton
 
                     recordButton
 
@@ -86,7 +80,23 @@ struct TeleprompterRecordingView: View {
                 .padding(.bottom, 48)
             }
         }
-        .navigationBarHidden(true)
+        .offset(y: dragOffset)
+        .gesture(swipeDownToDismiss)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    closeTeleprompter()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task {
             await vm.setup()
         }
@@ -100,6 +110,41 @@ struct TeleprompterRecordingView: View {
         } message: {
             Text(vm.error ?? "")
         }
+    }
+
+    private var closeButton: some View {
+        Button {
+            closeTeleprompter()
+        } label: {
+            Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 40))
+                .foregroundStyle(.white.opacity(0.8))
+                .frame(width: 72, height: 72)
+                .contentShape(Rectangle())
+        }
+    }
+
+    private func closeTeleprompter() {
+        vm.teardown()
+        dismiss()
+    }
+
+    private var swipeDownToDismiss: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                if value.translation.height > 0 {
+                    dragOffset = value.translation.height
+                }
+            }
+            .onEnded { value in
+                if value.translation.height > 120 {
+                    closeTeleprompter()
+                } else {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        dragOffset = 0
+                    }
+                }
+            }
     }
 
     private var recordButton: some View {
