@@ -11,6 +11,7 @@ struct SegmentBlockView: View {
     let onLayerOffsetChange: (UUID, Double) -> Void
     let onLayerVolumeChange: (UUID, Double) -> Void
     let onReorder: (ReorderDirection) -> Void
+    let onEditTap: () -> Void
 
     @State private var thumbnail: UIImage?
     @GestureState private var durationDragDelta: CGFloat = 0
@@ -69,8 +70,12 @@ struct SegmentBlockView: View {
             RoundedRectangle(cornerRadius: 6)
                 .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
         )
+        .onTapGesture(count: 2) { onEditTap() }
         .onTapGesture { onTap() }
         .contextMenu {
+            Button { onEditTap() } label: {
+                Label("Edit Segment", systemImage: "slider.horizontal.below.rectangle")
+            }
             Button { onReorder(.up) } label: {
                 Label("Move Left", systemImage: "arrow.left")
             }

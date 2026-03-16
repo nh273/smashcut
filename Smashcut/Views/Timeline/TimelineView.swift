@@ -6,6 +6,7 @@ struct ProjectTimelineView: View {
     let project: Project
 
     @State private var viewModel: TimelineViewModel
+    @State private var navigateToSegmentEdit = false
 
     init(project: Project) {
         self.project = project
@@ -30,6 +31,20 @@ struct ProjectTimelineView: View {
         }
         .onDisappear {
             viewModel.teardown()
+        }
+        .navigationDestination(isPresented: $navigateToSegmentEdit) {
+            SegmentEditView(project: project, segmentIndex: viewModel.currentSegmentIndex)
+        }
+        .onChange(of: navigateToSegmentEdit) { _, isEditing in
+            if isEditing {
+                viewModel.player.pause()
+                viewModel.isPlaying = false
+            } else {
+                // Refresh timeline from AppState after segment edit
+                if let updated = appState.projects.first(where: { $0.id == project.id }) {
+                    viewModel.timeline = updated.timeline ?? ProjectTimeline()
+                }
+            }
         }
     }
 
@@ -128,6 +143,10 @@ struct ProjectTimelineView: View {
                                 },
                                 onReorder: { direction in
                                     reorderSegment(at: index, direction: direction)
+                                },
+                                onEditTap: {
+                                    viewModel.selectSegment(at: index)
+                                    navigateToSegmentEdit = true
                                 }
                             )
                         }
