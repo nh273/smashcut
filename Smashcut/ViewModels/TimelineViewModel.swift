@@ -16,6 +16,9 @@ class TimelineViewModel {
     var scale: CGFloat = 80 // points per second
     var selectedSegmentID: UUID?
 
+    /// When true, user is actively scrubbing — suppress auto-scroll from playback.
+    var isScrubbing = false
+
     private var timeObserver: Any?
 
     var totalDuration: Double {

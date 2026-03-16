@@ -116,16 +116,24 @@ struct ProjectTimelineView: View {
 
     // MARK: - Timeline Area
 
+    /// Time captured at the start of a scrub drag gesture.
+    @State private var scrubAnchorTime: Double = 0
+
     @ViewBuilder
     private var timelineArea: some View {
         GeometryReader { geo in
-            ScrollView(.horizontal, showsIndicators: true) {
+            let halfWidth = geo.size.width / 2
+            let totalWidth = viewModel.totalDuration * viewModel.scale
+            // Content offset: playhead position maps to center of viewport
+            let contentOffset = halfWidth - viewModel.currentTime * viewModel.scale
+
+            ZStack(alignment: .topLeading) {
+                // Scrolling content layer
                 ZStack(alignment: .topLeading) {
-                    // Ruler + seek tap area
+                    // Ruler
                     TimelineRulerView(
                         totalDuration: viewModel.totalDuration,
-                        scale: viewModel.scale,
-                        onSeek: { viewModel.seek(to: $0) }
+                        scale: viewModel.scale
                     )
                     .frame(height: 20)
 
@@ -166,24 +174,43 @@ struct ProjectTimelineView: View {
                         }
                     }
                     .padding(.top, 24)
-
-                    // Playhead
-                    if viewModel.totalDuration > 0 {
-                        let playheadX = viewModel.currentTime * viewModel.scale
-                        Rectangle()
-                            .fill(Color.red)
-                            .frame(width: 2)
-                            .offset(x: playheadX)
-                            .allowsHitTesting(false)
-                    }
                 }
-                .frame(
-                    minWidth: max(
-                        geo.size.width,
-                        viewModel.totalDuration * viewModel.scale + 40)
-                )
+                .frame(width: totalWidth + geo.size.width) // pad so t=0 and t=end can reach center
+                .offset(x: contentOffset)
+
+                // Fixed playhead (always at center)
+                if viewModel.totalDuration > 0 {
+                    Rectangle()
+                        .fill(Color.red)
+                        .frame(width: 2)
+                        .position(x: halfWidth, y: geo.size.height / 2)
+                        .allowsHitTesting(false)
+                }
             }
+            .clipped()
+            .contentShape(Rectangle())
             .gesture(
+                DragGesture(minimumDistance: 1)
+                    .onChanged { value in
+                        if !viewModel.isScrubbing {
+                            // First movement — capture anchor and pause
+                            scrubAnchorTime = viewModel.currentTime
+                            if viewModel.isPlaying {
+                                viewModel.player.pause()
+                                viewModel.isPlaying = false
+                            }
+                            viewModel.isScrubbing = true
+                        }
+                        // Dragging left (negative) → move forward in time
+                        let dragSeconds = Double(-value.translation.width) / viewModel.scale
+                        let newTime = max(0, min(viewModel.totalDuration, scrubAnchorTime + dragSeconds))
+                        viewModel.seek(to: newTime)
+                    }
+                    .onEnded { _ in
+                        viewModel.isScrubbing = false
+                    }
+            )
+            .simultaneousGesture(
                 MagnifyGesture()
                     .onChanged { value in
                         viewModel.scale = max(20, min(500, viewModel.scale * value.magnification))
@@ -223,7 +250,6 @@ enum ReorderDirection {
 private struct TimelineRulerView: View {
     let totalDuration: Double
     let scale: CGFloat
-    let onSeek: (Double) -> Void
 
     var body: some View {
         GeometryReader { _ in
@@ -255,15 +281,7 @@ private struct TimelineRulerView: View {
                     t += tickInterval
                 }
             }
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        guard scale > 0 else { return }
-                        let seconds = max(0, min(totalDuration, Double(value.location.x) / scale))
-                        onSeek(seconds)
-                    }
-            )
+            .allowsHitTesting(false)
         }
     }
 
