@@ -7,6 +7,7 @@ struct ProjectTimelineView: View {
 
     @State private var viewModel: TimelineViewModel
     @State private var navigateToSegmentEdit = false
+    @State private var navigateToDraftPreview = false
 
     init(project: Project) {
         self.project = project
@@ -23,6 +24,16 @@ struct ProjectTimelineView: View {
         .navigationTitle("Timeline")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    viewModel.player.pause()
+                    viewModel.isPlaying = false
+                    navigateToDraftPreview = true
+                } label: {
+                    Image(systemName: "play.rectangle")
+                }
+                .accessibilityLabel("Preview Draft")
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     viewModel.saveChanges(to: appState)
@@ -34,6 +45,9 @@ struct ProjectTimelineView: View {
         }
         .navigationDestination(isPresented: $navigateToSegmentEdit) {
             SegmentEditView(project: project, segmentIndex: viewModel.currentSegmentIndex)
+        }
+        .navigationDestination(isPresented: $navigateToDraftPreview) {
+            DraftPreviewView(project: project)
         }
         .onChange(of: navigateToSegmentEdit) { _, isEditing in
             if isEditing {

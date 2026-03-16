@@ -7,6 +7,7 @@ struct SectionManagerView: View {
 
     @State private var showMediaPicker = false
     @State private var navigateToTimeline = false
+    @State private var navigateToDraftPreview = false
 
     var currentProject: Project {
         appState.projects.first(where: { $0.id == project.id }) ?? project
@@ -26,6 +27,17 @@ struct SectionManagerView: View {
                     .accessibilityIdentifier("openTimelineButton")
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+
+                    Button {
+                        navigateToDraftPreview = true
+                    } label: {
+                        Label("Preview Draft", systemImage: "play.rectangle")
+                            .font(.body.bold())
+                    }
+                    .buttonStyle(.bordered)
+                    .accessibilityIdentifier("previewDraftButton")
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                 }
             }
             scriptSection
@@ -35,6 +47,9 @@ struct SectionManagerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $navigateToTimeline) {
             ProjectTimelineView(project: currentProject)
+        }
+        .navigationDestination(isPresented: $navigateToDraftPreview) {
+            DraftPreviewView(project: currentProject)
         }
         .sheet(isPresented: $showMediaPicker) {
             ProjectMediaPickerView { identifiers in
