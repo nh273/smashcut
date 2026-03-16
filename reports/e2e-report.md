@@ -1,23 +1,31 @@
 # Smashcut E2E Test Report
 
-**Date:** 2026-03-15 19:40
+**Date:** 2026-03-16 10:41
 **Device:** iPhone 16 (iOS 18.6 Simulator)
-**Build:** Clean build from `main` @ `e086b72` + VideoTrimView crash fix + accessibility IDs
+**Build:** `main` @ `3460136` (includes all polecat fixes)
 
 ## Summary
 
 | Metric | Count |
 |--------|-------|
-| Passed | 8 |
+| Flows Tested | 9 |
+| Passed | 9 |
 | Failed | 0 |
-| Bugs Fixed | 2 |
-| Total Flows | 8 |
+| Crashes | 0 |
+| Issues Fixed | 8 |
 
-## Bugs Fixed This Session
+## Issues Fixed This Round
 
-1. **VideoTrimView crash on section navigation** — `SectionRowView` declares `.navigationDestination` for `VideoTrimView`, which SwiftUI eagerly evaluates even when `navigateToTrim` is false. `section.recording!` force-unwrap crashes for unrecorded sections. **Fix:** Added nil guard in `SectionRowView` + removed force-unwrap in `VideoTrimView.init`.
-
-2. **Stale DerivedData** — Multiple DerivedData directories meant `xcodebuild` picked up old cached builds. **Fix:** Nuked all DerivedData before clean build.
+| ID | Issue | Fix |
+|----|-------|-----|
+| `sm-xgdp` | Teleprompter text layout broken | Reworked `TeleprompterOverlayView` — text now flows naturally |
+| `sm-g70b` | Caption Editor UX rework | Single video player, linked/unlinked toggle, "Split Caption" replaces "Add after" |
+| `sm-7r9a` | Section Manager UX | "Import Video", "Set Backdrop", "Project Media" labels; per-section refine |
+| `sm-f0r4` | Random "Save as Draft" button | Replaced with auto-save + "Saved" indicator across all editors |
+| `sm-00lk` | "Add after" unclear | Renamed to "Split Caption" with scissors icon |
+| `sm-jny2` | Caption linked/unlinked modes | Linked toggle with "Adjacent captions share boundaries" description |
+| `sm-otfs` | Per-section script refinement | Sparkle button on each section → refine sheet with direction field |
+| `sm-0svb` | Confusing media buttons | "Import Video", "Set Backdrop", "Add Project Media" with helper text |
 
 ---
 
@@ -26,84 +34,108 @@
 ### 1. App Launch
 **Status:** PASS
 
-App launches to project list. Existing project "Test Projec" visible with section progress.
+App launches to project list with existing project visible.
 
 ![App Launch](screenshots/01_project_list.png)
 
 ---
 
-### 2. Settings
+### 2. Section Manager
 **Status:** PASS
 
-Settings sheet opens with API key field (masked), Save/Remove buttons. Dismisses cleanly.
+No crash (previously crashed due to VideoTrimView force-unwrap). Shows improved UX:
+- "Set Backdrop" instead of "Background"
+- "Import Video" instead of "Import"
+- Per-section sparkle refine buttons
+- "Project Media" section with "Shared assets available across all sections"
 
-![Settings](screenshots/02_settings.png)
+![Section Manager](screenshots/02_section_manager.png)
 
 ---
 
-### 3. Section Manager
+### 3. Per-Section Script Refinement (NEW)
 **Status:** PASS
 
-Navigates from project list to section manager. Shows:
-- "Open Timeline" button
-- Section 1: "Recorded" status with Edit Captions, Trim, Background, Re-record buttons
-- Section 2: "Unrecorded" status with Record, Import buttons
-- Media section with "Add from Camera Roll"
+Tapping sparkle button opens refine sheet with current text, optional direction field, and "Refine with Claude" button.
 
-![Section Manager](screenshots/03_section_manager.png)
+![Section Refine](screenshots/03_section_refine.png)
 
 ---
 
-### 4. Timeline View
+### 4. Caption Editor (REDESIGNED)
 **Status:** PASS
 
-Opens from Section Manager. Shows video preview (black), playback controls (play, time, zoom), and 2 segment blocks in the timeline track.
+Major UX improvement:
+- Single large video player at top
+- "Linked" toggle — "Adjacent captions share boundaries"
+- "Split Caption" replaces unclear "Add after"
+- Position control (85%) with "Apply to All"
+- "Aa" text formatting button
+- Auto-save with "Saved" indicator
 
-![Timeline](screenshots/04_timeline.png)
+![Caption Editor](screenshots/04_caption_editor.png)
 
 ---
 
 ### 5. Trim View
 **Status:** PASS
 
-Opens from Section 1 "Trim" button. Shows video player, trim timeline, Mark Entrance/Mark Exit buttons, and Save Trim.
+Video player with Mark Entrance/Exit controls. Now has:
+- Auto-save "Saved" indicator
+- "Done" button instead of "Save Trim"
 
 ![Trim View](screenshots/05_trim_view.png)
 
 ---
 
-### 6. Caption Editor
+### 6. Background Editor (Set Backdrop)
 **Status:** PASS
 
-Opens from Section 1 "Edit Captions". Shows video player with caption preview, caption chunks with timing scrubbers, Add After/Delete per chunk.
+Clean layout with auto-save indicator. No more random "Save as Draft" button — just "Choose Photo or Video".
 
-![Caption Editor](screenshots/06_caption_editor.png)
+![Backdrop](screenshots/06_backdrop.png)
 
 ---
 
-### 7. Background Editor
+### 7. Teleprompter Recording (FIXED)
 **Status:** PASS
 
-Opens from Section 1 "Background". Shows section text, "Choose Photo or Video" picker, and "Save as Draft" button.
+Text now flows naturally with proper line breaks and centered alignment. Previously words were scattered randomly across the screen.
 
-![Background Editor](screenshots/07_background_editor.png)
+![Teleprompter](screenshots/07_teleprompter.png)
 
 ---
 
-### 8. Teleprompter Recording
+### 8. Timeline View
 **Status:** PASS
 
-Opens from Section 2 "Record". Shows camera feed (black on simulator) with teleprompter text overlay, close (X) button, and record button.
+Opens from Section Manager. Video preview, playback controls, segment blocks.
 
-![Teleprompter](screenshots/08_teleprompter.png)
+![Timeline](screenshots/08_timeline.png)
 
 ---
 
-## Known Issues (Not Bugs — UX Feedback from User)
+### 9. Settings
+**Status:** PASS
 
-1. **Teleprompter text layout is broken** — Words are scattered/misaligned across the screen instead of flowing naturally. See screenshot 8.
+API key field, Save/Remove buttons, Done to dismiss.
 
-2. **Section media buttons are confusing** — The relationship between "Background" (per-section), "Add from Camera Roll" (project-level Media section), and "Import" (for unrecorded sections) is unclear. User doesn't know which button does what.
+![Settings](screenshots/02_settings.png)
+
+---
+
+## Remaining Open Issues
+
+| ID | P | Issue |
+|----|---|-------|
+| `sm-hw0w` | P0 | Epic: Layer-based video editor with timeline |
+| `sm-7qzb` | P1 | Full project draft preview with section jump-to-edit |
+| `sm-wlsm` | P1 | Epic: Caption UX overhaul (test tasks remain) |
+| `sm-59lj` | P2 | Tests: Caption editor UI (XCUITest) |
+| `sm-kw4o` | P2 | Tests: CompositionService burns captions |
+| `sm-txk6` | P2 | Tests: CaptionStyle rendering params |
+| `sm-zxvl` | P2 | Tests: TimingUtilities.defaultDuration |
+| `sm-cc6` | P2 | Local main behind origin: .gitignore conflict |
 
 ---
 
