@@ -20,6 +20,13 @@ struct SegmentBlockView: View {
         max(40, segment.duration * scale + durationDragDelta)
     }
 
+    private var filmstripTaskID: String {
+        let layer = segment.layers.first(where: { $0.type == .video })
+        let start = layer?.trimStartSeconds ?? 0
+        let end = layer?.trimEndSeconds ?? segment.duration
+        return "\(segment.id)\(start)\(end)"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             thumbnailHeader
@@ -129,7 +136,7 @@ struct SegmentBlockView: View {
                 .padding(2)
         }
         .clipShape(RoundedRectangle(cornerRadius: 4))
-        .task(id: segment.duration) { await loadFilmstrip() }
+        .task(id: filmstripTaskID) { await loadFilmstrip() }
     }
 
     // MARK: - Duration Handle
@@ -162,19 +169,25 @@ struct SegmentBlockView: View {
               let url = videoLayer.sourceURL
         else { return }
 
+        let trimStart = videoLayer.trimStartSeconds ?? 0
+        let trimEnd = videoLayer.trimEndSeconds ?? segment.duration
+
         // Check cache first
-        if let cached = await FilmstripCache.shared.thumbnails(for: url, duration: segment.duration) {
+        if let cached = await FilmstripCache.shared.thumbnails(
+            for: url, startTime: trimStart, endTime: trimEnd
+        ) {
             filmstripFrames = cached
             return
         }
 
         let frames = await ThumbnailService.generateFilmstripThumbnails(
             from: url,
-            duration: segment.duration
+            startTime: trimStart,
+            endTime: trimEnd
         )
         guard !frames.isEmpty else { return }
 
-        await FilmstripCache.shared.store(frames, for: url, duration: segment.duration)
+        await FilmstripCache.shared.store(frames, for: url, startTime: trimStart, endTime: trimEnd)
         filmstripFrames = frames
     }
 }
@@ -188,6 +201,7 @@ struct LayerTrackView: View {
     let onOffsetChange: (Double) -> Void
     let onVolumeChange: (Double) -> Void
 
+    @State private var layerFilmstrip: [UIImage] = []
     @GestureState private var dragOffsetDelta: CGFloat = 0
 
     private var layerColor: Color {
@@ -198,10 +212,11 @@ struct LayerTrackView: View {
         }
     }
 
+    private var trimStart: Double { layer.trimStartSeconds ?? 0 }
+    private var trimEnd: Double { layer.trimEndSeconds ?? segmentDuration }
+
     private var effectiveDuration: Double {
-        let trimStart = layer.trimStartSeconds ?? 0
-        let trimEnd = layer.trimEndSeconds ?? segmentDuration
-        return max(0, trimEnd - trimStart)
+        max(0, trimEnd - trimStart)
     }
 
     private var layerWidth: CGFloat {
@@ -219,10 +234,10 @@ struct LayerTrackView: View {
                 .frame(height: 28)
                 .cornerRadius(3)
 
-            // Layer bar
-            RoundedRectangle(cornerRadius: 3)
-                .fill(layerColor.opacity(0.7))
+            // Layer bar — filmstrip for video, colored bar for others
+            layerBarContent
                 .frame(width: layerWidth, height: 28)
+                .clipShape(RoundedRectangle(cornerRadius: 3))
                 .overlay(alignment: .leading) {
                     // Volume indicator bar
                     GeometryReader { geo in
@@ -246,6 +261,7 @@ struct LayerTrackView: View {
                             .font(.system(size: 8, weight: .semibold))
                     }
                     .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.6), radius: 1, x: 0, y: 1)
                 }
                 .offset(x: max(0, offsetX))
                 .gesture(
@@ -271,6 +287,54 @@ struct LayerTrackView: View {
                 }
         }
         .frame(height: 28)
+        .task(id: "\(layer.id)\(trimStart)\(trimEnd)") {
+            await loadLayerFilmstrip()
+        }
+    }
+
+    @ViewBuilder
+    private var layerBarContent: some View {
+        if layer.type == .video, !layerFilmstrip.isEmpty {
+            GeometryReader { geo in
+                HStack(spacing: 0) {
+                    ForEach(Array(layerFilmstrip.enumerated()), id: \.offset) { _, frame in
+                        Image(uiImage: frame)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(
+                                width: geo.size.width / CGFloat(layerFilmstrip.count),
+                                height: 28
+                            )
+                            .clipped()
+                    }
+                }
+            }
+        } else {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(layerColor.opacity(0.7))
+        }
+    }
+
+    private func loadLayerFilmstrip() async {
+        guard layer.type == .video, let url = layer.sourceURL else { return }
+
+        if let cached = await FilmstripCache.shared.thumbnails(
+            for: url, startTime: trimStart, endTime: trimEnd
+        ) {
+            layerFilmstrip = cached
+            return
+        }
+
+        let frames = await ThumbnailService.generateFilmstripThumbnails(
+            from: url,
+            startTime: trimStart,
+            endTime: trimEnd,
+            thumbHeight: 28
+        )
+        guard !frames.isEmpty else { return }
+
+        await FilmstripCache.shared.store(frames, for: url, startTime: trimStart, endTime: trimEnd)
+        layerFilmstrip = frames
     }
 
     private var layerIcon: String {

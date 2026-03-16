@@ -22,15 +22,17 @@ struct ThumbnailService {
         }
     }
 
-    /// Generates filmstrip thumbnails sampled at regular intervals across a video.
-    /// Returns an array of UIImages suitable for display in a horizontal strip.
+    /// Generates filmstrip thumbnails sampled at regular intervals across a time range of a video.
+    /// Works for any video URL + time range — whole clips, sub-segments, or trimmed rolls.
     /// - Parameters:
     ///   - videoURL: Source video file URL
-    ///   - duration: Segment duration in seconds (used to determine sample count)
+    ///   - startTime: Start of the range in seconds (default 0)
+    ///   - endTime: End of the range in seconds (nil = asset duration)
     ///   - thumbHeight: Desired thumbnail height in points (width derived from aspect ratio)
     static func generateFilmstripThumbnails(
         from videoURL: URL,
-        duration: Double,
+        startTime: Double = 0,
+        endTime: Double? = nil,
         thumbHeight: CGFloat = 40
     ) async -> [UIImage] {
         let asset = AVURLAsset(url: videoURL)
@@ -49,14 +51,18 @@ struct ThumbnailService {
         }
         guard assetDuration > 0 else { return [] }
 
-        // Sample roughly one frame per 0.5 seconds of segment duration, min 2 max 20
-        let sampleCount = max(2, min(20, Int(ceil(duration / 0.5))))
-        let effectiveDuration = min(duration, assetDuration)
-        let interval = effectiveDuration / Double(sampleCount)
+        let rangeStart = max(0, min(startTime, assetDuration))
+        let rangeEnd = min(endTime ?? assetDuration, assetDuration)
+        let rangeDuration = rangeEnd - rangeStart
+        guard rangeDuration > 0 else { return [] }
+
+        // Sample roughly one frame per 0.5 seconds of range duration, min 2 max 20
+        let sampleCount = max(2, min(20, Int(ceil(rangeDuration / 0.5))))
+        let interval = rangeDuration / Double(sampleCount)
 
         var times: [NSValue] = []
         for i in 0..<sampleCount {
-            let seconds = interval * Double(i) + interval * 0.5
+            let seconds = rangeStart + interval * Double(i) + interval * 0.5
             let clamped = min(seconds, assetDuration - 0.01)
             times.append(NSValue(time: CMTime(seconds: max(0, clamped), preferredTimescale: 600)))
         }
@@ -78,25 +84,24 @@ struct ThumbnailService {
     }
 }
 
-/// In-memory cache for filmstrip thumbnails keyed by video URL + segment duration.
+/// In-memory cache for filmstrip thumbnails keyed by video URL + time range.
 actor FilmstripCache {
     static let shared = FilmstripCache()
 
     private var cache: [String: [UIImage]] = [:]
     private let maxEntries = 50
 
-    func thumbnails(for url: URL, duration: Double) -> [UIImage]? {
-        cache[cacheKey(url: url, duration: duration)]
+    func thumbnails(for url: URL, startTime: Double, endTime: Double) -> [UIImage]? {
+        cache[cacheKey(url: url, startTime: startTime, endTime: endTime)]
     }
 
-    func store(_ images: [UIImage], for url: URL, duration: Double) {
+    func store(_ images: [UIImage], for url: URL, startTime: Double, endTime: Double) {
         if cache.count >= maxEntries {
-            // Evict oldest entry
             if let firstKey = cache.keys.first {
                 cache.removeValue(forKey: firstKey)
             }
         }
-        cache[cacheKey(url: url, duration: duration)] = images
+        cache[cacheKey(url: url, startTime: startTime, endTime: endTime)] = images
     }
 
     func invalidate(for url: URL) {
@@ -106,7 +111,7 @@ actor FilmstripCache {
         }
     }
 
-    private func cacheKey(url: URL, duration: Double) -> String {
-        "\(url.absoluteString)|\(String(format: "%.1f", duration))"
+    private func cacheKey(url: URL, startTime: Double, endTime: Double) -> String {
+        "\(url.absoluteString)|\(String(format: "%.1f", startTime))|\(String(format: "%.1f", endTime))"
     }
 }
