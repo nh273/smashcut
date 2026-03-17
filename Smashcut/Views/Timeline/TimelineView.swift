@@ -98,6 +98,15 @@ struct ProjectTimelineView: View {
             Spacer()
 
             Button {
+                viewModel.splitAtPlayhead()
+            } label: {
+                Image(systemName: "scissors")
+                    .font(.title3)
+            }
+            .disabled(viewModel.selectedSegmentID == nil)
+            .accessibilityLabel("Split at Playhead")
+
+            Button {
                 viewModel.scale = max(20, viewModel.scale * 0.75)
             } label: {
                 Image(systemName: "minus.magnifyingglass")

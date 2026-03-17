@@ -154,6 +154,73 @@ struct TimelineSegment: Identifiable, Codable {
     }
 }
 
+extension TimelineSegment {
+    /// Split a segment into two at `localTime` (seconds from segment start).
+    /// Layers and text layers are distributed/trimmed to the appropriate half.
+    static func split(_ segment: TimelineSegment, at localTime: Double) -> (left: TimelineSegment, right: TimelineSegment) {
+        var left = TimelineSegment(scriptText: segment.scriptText)
+        left.duration = localTime
+
+        var right = TimelineSegment(scriptText: segment.scriptText)
+        right.duration = segment.duration - localTime
+
+        // Split layers
+        for layer in segment.layers {
+            let layerStart = layer.startOffset
+            let trimStart = layer.trimStartSeconds ?? 0
+            let trimEnd = layer.trimEndSeconds ?? segment.duration
+            let layerEnd = layerStart + (trimEnd - trimStart)
+
+            // Layer spans left half
+            if layerStart < localTime {
+                var l = layer
+                l.id = UUID()
+                l.trimEndSeconds = trimStart + min(localTime - layerStart, trimEnd - trimStart)
+                left.layers.append(l)
+            }
+
+            // Layer spans right half
+            if layerEnd > localTime {
+                var r = layer
+                r.id = UUID()
+                if localTime > layerStart {
+                    r.trimStartSeconds = trimStart + (localTime - layerStart)
+                    r.startOffset = 0
+                } else {
+                    r.startOffset = layerStart - localTime
+                }
+                right.layers.append(r)
+            }
+        }
+
+        // Split text layers
+        for textLayer in segment.textLayers {
+            if textLayer.endSeconds <= localTime {
+                left.textLayers.append(textLayer)
+            } else if textLayer.startSeconds >= localTime {
+                var t = textLayer
+                t.startSeconds -= localTime
+                t.endSeconds -= localTime
+                right.textLayers.append(t)
+            } else {
+                // Spans the split — duplicate to both sides
+                var tLeft = textLayer
+                tLeft.id = UUID()
+                tLeft.endSeconds = localTime
+                left.textLayers.append(tLeft)
+
+                var tRight = textLayer
+                tRight.id = UUID()
+                tRight.startSeconds = 0
+                tRight.endSeconds = textLayer.endSeconds - localTime
+                right.textLayers.append(tRight)
+            }
+        }
+
+        return (left, right)
+    }
+}
+
 // MARK: - ProjectTimeline
 
 /// Replaces Script. The top-level timeline model for a project.

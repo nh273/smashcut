@@ -113,6 +113,32 @@ class TimelineViewModel {
         timeline.segments.move(fromOffsets: source, toOffset: destination)
     }
 
+    /// Split the selected segment into two at the current playhead position.
+    /// Returns true if split succeeded.
+    @discardableResult
+    func splitAtPlayhead() -> Bool {
+        guard let segID = selectedSegmentID,
+              let segIdx = timeline.segments.firstIndex(where: { $0.id == segID })
+        else { return false }
+
+        let segment = timeline.segments[segIdx]
+        let segStart = segmentStartTime(at: segIdx)
+        let localTime = currentTime - segStart
+
+        // Need at least 0.1s on each side
+        guard localTime >= 0.1, localTime <= segment.duration - 0.1 else { return false }
+
+        let (left, right) = TimelineSegment.split(segment, at: localTime)
+
+        timeline.segments.replaceSubrange(segIdx...segIdx, with: [left, right])
+        selectedSegmentID = left.id
+        currentSegmentIndex = segIdx
+        loadSegmentPlayer(at: segIdx)
+        let cmTime = CMTime(seconds: localTime, preferredTimescale: 600)
+        player.seek(to: cmTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        return true
+    }
+
     func saveChanges(to appState: AppState) {
         var updated = project
         updated.timeline = timeline

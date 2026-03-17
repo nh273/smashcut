@@ -463,6 +463,134 @@ struct SegmentEditTests {
         #expect(vm.segment.textLayers[0].layer.zIndex > vm.segment.textLayers[1].layer.zIndex)
     }
 
+    // MARK: - Split Segment
+
+    @Test func splitBasicSegmentProducesCorrectDurations() {
+        let segment = makeSegment()
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+        #expect(left.duration == 2.0)
+        #expect(right.duration == 3.0)
+    }
+
+    @Test func splitPreservesScriptText() {
+        let segment = makeSegment()
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+        #expect(left.scriptText == "Test segment")
+        #expect(right.scriptText == "Test segment")
+    }
+
+    @Test func splitDistributesVideoLayerToBothHalves() {
+        let segment = makeSegment()
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+
+        #expect(left.layers.count == 1)
+        #expect(right.layers.count == 1)
+        #expect(left.layers[0].type == .video)
+        #expect(right.layers[0].type == .video)
+    }
+
+    @Test func splitAdjustsLayerTrimPoints() {
+        var segment = makeSegment(textLayers: [])
+        segment.layers[0].trimStartSeconds = 0
+        segment.layers[0].trimEndSeconds = 5.0
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+
+        #expect(left.layers[0].trimStartSeconds == 0)
+        #expect(left.layers[0].trimEndSeconds == 2.0)
+        #expect(right.layers[0].trimStartSeconds == 2.0)
+        #expect(right.layers[0].startOffset == 0)
+    }
+
+    @Test func splitTextLayerEntirelyInLeftHalf() {
+        let baseLayer = Layer(type: .text, zIndex: 10)
+        let tl = TextLayer(layer: baseLayer, text: "Early", startSeconds: 0, endSeconds: 1.5)
+        let segment = makeSegment(textLayers: [tl])
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+
+        #expect(left.textLayers.count == 1)
+        #expect(left.textLayers[0].text == "Early")
+        #expect(right.textLayers.count == 0)
+    }
+
+    @Test func splitTextLayerEntirelyInRightHalf() {
+        let baseLayer = Layer(type: .text, zIndex: 10)
+        let tl = TextLayer(layer: baseLayer, text: "Late", startSeconds: 3.0, endSeconds: 5.0)
+        let segment = makeSegment(textLayers: [tl])
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+
+        #expect(left.textLayers.count == 0)
+        #expect(right.textLayers.count == 1)
+        #expect(right.textLayers[0].startSeconds == 1.0)
+        #expect(right.textLayers[0].endSeconds == 3.0)
+    }
+
+    @Test func splitTextLayerSpanningSplitPointDuplicatesToBothSides() {
+        let baseLayer = Layer(type: .text, zIndex: 10)
+        let tl = TextLayer(layer: baseLayer, text: "Spanning", startSeconds: 1.0, endSeconds: 4.0)
+        let segment = makeSegment(textLayers: [tl])
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+
+        #expect(left.textLayers.count == 1)
+        #expect(left.textLayers[0].endSeconds == 2.0)
+        #expect(right.textLayers.count == 1)
+        #expect(right.textLayers[0].startSeconds == 0)
+        #expect(right.textLayers[0].endSeconds == 2.0)
+    }
+
+    @Test func splitNewIDsAreDifferentFromOriginal() {
+        let segment = makeSegment()
+        let originalLayerID = segment.layers[0].id
+        let (left, right) = TimelineSegment.split(segment, at: 2.0)
+
+        #expect(left.layers[0].id != originalLayerID)
+        #expect(right.layers[0].id != originalLayerID)
+        #expect(left.layers[0].id != right.layers[0].id)
+    }
+
+    @Test func splitLayerWithStartOffset() {
+        var segment = makeSegment(textLayers: [])
+        segment.duration = 10.0
+        segment.layers[0].startOffset = 3.0
+        segment.layers[0].trimStartSeconds = 0
+        segment.layers[0].trimEndSeconds = 5.0
+
+        let (left, right) = TimelineSegment.split(segment, at: 5.0)
+
+        // Layer starts at offset 3, so only 2s in left half (from 3 to 5)
+        #expect(left.layers.count == 1)
+        #expect(left.layers[0].trimEndSeconds == 2.0)
+
+        // Right half gets remaining 3s of the layer (from 5 to 8)
+        #expect(right.layers.count == 1)
+        #expect(right.layers[0].trimStartSeconds == 2.0)
+        #expect(right.layers[0].startOffset == 0)
+    }
+
+    @Test func splitLayerEntirelyBeforeSplitPoint() {
+        var segment = makeSegment(textLayers: [])
+        segment.duration = 10.0
+        segment.layers[0].startOffset = 0
+        segment.layers[0].trimStartSeconds = 0
+        segment.layers[0].trimEndSeconds = 3.0
+
+        let (left, right) = TimelineSegment.split(segment, at: 5.0)
+        #expect(left.layers.count == 1)
+        #expect(right.layers.count == 0)
+    }
+
+    @Test func splitLayerEntirelyAfterSplitPoint() {
+        var segment = makeSegment(textLayers: [])
+        segment.duration = 10.0
+        segment.layers[0].startOffset = 6.0
+        segment.layers[0].trimStartSeconds = 0
+        segment.layers[0].trimEndSeconds = 3.0
+
+        let (left, right) = TimelineSegment.split(segment, at: 5.0)
+        #expect(left.layers.count == 0)
+        #expect(right.layers.count == 1)
+        #expect(right.layers[0].startOffset == 1.0)
+    }
+
     // MARK: - NormalizedRect
 
     @Test func normalizedRectFullFrame() {
