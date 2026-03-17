@@ -12,9 +12,11 @@ enum SectionEditBridge {
         edit.id = section.id  // Preserve ID for dual-write lookups
 
         if let recording = section.recording {
+            // Rebase URL in case sandbox UUID changed since last install
+            let videoURL = VideoFileManager.rebaseURL(recording.rawVideoURL)
             // Add the recording as a SourceMedia in the bin
             let source = SourceMedia(
-                url: recording.rawVideoURL,
+                url: videoURL,
                 type: .video,
                 durationSeconds: recording.durationSeconds
             )
@@ -35,7 +37,7 @@ enum SectionEditBridge {
                 markID: mark.id,
                 layer: Layer(
                     type: .video,
-                    sourceURL: recording.rawVideoURL,
+                    sourceURL: videoURL,
                     zIndex: 0,
                     trimStartSeconds: recording.trimStartSeconds,
                     trimEndSeconds: recording.trimEndSeconds,
@@ -103,10 +105,11 @@ enum SectionEditBridge {
             recording.durationSeconds = firstVideo.durationSeconds
             recording.captionTimestamps = edit.captionTimestamps
 
-            // Use first mark's trim points if available
+            // Use first mark's trim points if available (only set if they differ from full range)
             if let firstMark = edit.marks.first(where: { $0.sourceMediaID == firstVideo.id }) {
-                recording.trimStartSeconds = firstMark.inSeconds > 0 ? firstMark.inSeconds : nil
-                recording.trimEndSeconds = firstMark.outSeconds < firstVideo.durationSeconds ? firstMark.outSeconds : nil
+                let dur = firstVideo.durationSeconds
+                recording.trimStartSeconds = firstMark.inSeconds > 0.01 ? firstMark.inSeconds : nil
+                recording.trimEndSeconds = (dur > 0 && firstMark.outSeconds < dur - 0.01) ? firstMark.outSeconds : nil
             }
 
             section.recording = recording

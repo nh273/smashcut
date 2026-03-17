@@ -60,16 +60,14 @@ class RollArrangerViewModel {
 
     func addMarkToRoll(markID: UUID, rollID: UUID) {
         guard let mark = sectionEdit.marks.first(where: { $0.id == markID }),
-              let rollIdx = sectionEdit.rolls.firstIndex(where: { $0.id == rollID }) else { return }
-
-        // Find the source media for the URL
-        let sourceURL = sectionEdit.mediaBin.first(where: { $0.id == mark.sourceMediaID })?.url
+              let rollIdx = sectionEdit.rolls.firstIndex(where: { $0.id == rollID }),
+              let sourceMedia = sectionEdit.mediaBin.first(where: { $0.id == mark.sourceMediaID }) else { return }
 
         let rollLayer = RollLayer(
             markID: markID,
             layer: Layer(
-                type: .video,
-                sourceURL: sourceURL,
+                type: sourceMedia.type,
+                sourceURL: sourceMedia.url,
                 zIndex: sectionEdit.rolls[rollIdx].layers.count,
                 trimStartSeconds: mark.inSeconds,
                 trimEndSeconds: mark.outSeconds
@@ -88,8 +86,10 @@ class RollArrangerViewModel {
     func removeLayerFromRoll(rollID: UUID, layerID: UUID) {
         guard let rollIdx = sectionEdit.rolls.firstIndex(where: { $0.id == rollID }) else { return }
         sectionEdit.rolls[rollIdx].layers.removeAll { $0.id == layerID }
-        // Remove empty rolls that aren't A-Roll
-        if sectionEdit.rolls[rollIdx].layers.isEmpty && sectionEdit.rolls[rollIdx].name != "A-Roll" {
+        // Remove empty non-A-Roll rolls (re-check index since removeAll may have shifted things)
+        if rollIdx < sectionEdit.rolls.count,
+           sectionEdit.rolls[rollIdx].layers.isEmpty,
+           sectionEdit.rolls[rollIdx].name != "A-Roll" {
             sectionEdit.rolls.remove(at: rollIdx)
         }
         updateStatus()

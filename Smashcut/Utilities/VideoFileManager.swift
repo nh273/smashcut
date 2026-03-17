@@ -101,4 +101,29 @@ struct VideoFileManager {
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }
+
+    // MARK: - URL Rebase (Stale Sandbox Fix)
+
+    /// Rebases a stored absolute URL to the current sandbox.
+    /// When the app is reinstalled, the Application UUID changes, breaking stored absolute paths.
+    /// This extracts the relative path after "Application Support/smashcut/" and resolves it
+    /// against the current base directory.
+    static func rebaseURL(_ url: URL) -> URL {
+        let path = url.path
+        // Find the relative portion after the stable "smashcut/" marker
+        if let range = path.range(of: "smashcut/") {
+            let relativePath = String(path[range.upperBound...])
+            let rebased = baseDirectory.appendingPathComponent(relativePath)
+            if FileManager.default.fileExists(atPath: rebased.path) {
+                return rebased
+            }
+        }
+        // Already valid or can't rebase
+        return url
+    }
+
+    /// Checks if a URL points to an existing file.
+    static func exists(_ url: URL) -> Bool {
+        FileManager.default.fileExists(atPath: url.path)
+    }
 }

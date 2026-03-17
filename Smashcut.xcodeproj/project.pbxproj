@@ -66,6 +66,7 @@
 		CA9FEEAAAA16A3DE38AE80CC /* RollArrangerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6464DC724FC498022416E11 /* RollArrangerViewModel.swift */; };
 		D174DD99307D75E24012E110 /* LiveCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EC234D99B8FF36747D1A5B /* LiveCompositor.swift */; };
 		D64F9DD1D6463D71C90CA841 /* SmashcutApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF116A91A949180054DD7ACA /* SmashcutApp.swift */; };
+		D74473D80CFB9C012792F784 /* SectionEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE97ED31D4EB24B7F1DF990 /* SectionEditTests.swift */; };
 		DF19432078E02B2A33C2E33E /* MarkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CA8CFCD28177A3A1FB602 /* MarkEditorView.swift */; };
 		E0FC4FCF868E8CAC2876F548 /* BackgroundEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */; };
 		E375BF3CFF988233B7B37FFE /* CompositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDAD59278852C474F520D61 /* CompositionService.swift */; };
@@ -117,6 +118,7 @@
 		3DFC52192EEB8AA6138CF828 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		3EB8C6D4E565C5FCAB51BF0A /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		450DCE75F03AA9ACFC962622 /* Vision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vision.framework; path = System/Library/Frameworks/Vision.framework; sourceTree = SDKROOT; };
+		4CE97ED31D4EB24B7F1DF990 /* SectionEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionEditTests.swift; sourceTree = "<group>"; };
 		51D46BC10B8500928036D0E8 /* CaptionEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionEditorView.swift; sourceTree = "<group>"; };
 		55D9468AA540621FD76F215B /* LayerAssetCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerAssetCache.swift; sourceTree = "<group>"; };
 		5786320696A6CA458A3798E6 /* Smashcut.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Smashcut.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -333,6 +335,7 @@
 		69BF89B6FFF33F1C3188BA8D /* SmashcutTests */ = {
 			isa = PBXGroup;
 			children = (
+				4CE97ED31D4EB24B7F1DF990 /* SectionEditTests.swift */,
 				ACD695EB699D683492B0ADC2 /* SegmentEditTests.swift */,
 				7DD7495E4684EF3C3305CD21 /* SmashcutTests.swift */,
 			);
@@ -658,6 +661,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D74473D80CFB9C012792F784 /* SectionEditTests.swift in Sources */,
 				AF1531977A1BA62414BBE28C /* SegmentEditTests.swift in Sources */,
 				725DE21D4A2A56174F1CB278 /* SmashcutTests.swift in Sources */,
 			);

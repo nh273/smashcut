@@ -36,13 +36,13 @@ class MarkEditorViewModel {
 
     /// Set the in-point at current playhead position.
     func markIn() {
-        pendingMarkIn = currentTime
+        pendingMarkIn = max(0, currentTime)
     }
 
     /// Set the out-point and create a mark from the pending in-point.
     func markOut() {
         guard let inPoint = pendingMarkIn else { return }
-        let outPoint = currentTime
+        let outPoint = min(currentTime, duration > 0 ? duration : .infinity)
         guard outPoint > inPoint else { return }
 
         let mark = Mark(
@@ -94,7 +94,9 @@ class MarkEditorViewModel {
 
     /// Update a mark's in/out points.
     func updateMark(id: UUID, inSeconds: Double, outSeconds: Double) {
-        guard let idx = sectionEdit.marks.firstIndex(where: { $0.id == id }) else { return }
+        guard outSeconds > inSeconds,
+              inSeconds >= 0,
+              let idx = sectionEdit.marks.firstIndex(where: { $0.id == id }) else { return }
         sectionEdit.marks[idx].inSeconds = inSeconds
         sectionEdit.marks[idx].outSeconds = outSeconds
     }
