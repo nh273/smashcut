@@ -43,12 +43,10 @@ struct MarkEditorView: View {
         }
         .navigationTitle("Mark Clips")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { save() }
-            }
+        .onDisappear {
+            save()
+            vm.teardown()
         }
-        .onDisappear { vm.teardown() }
     }
 
     // MARK: - Player
@@ -237,7 +235,6 @@ struct MarkEditorView: View {
             updated.sectionEdits = edits
         }
         appState.updateProject(updated)
-        dismiss()
     }
 }
 

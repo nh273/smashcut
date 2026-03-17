@@ -61,11 +61,7 @@ struct MediaBinView: View {
         }
         .navigationTitle("Media Bin")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { save() }
-            }
-        }
+        .onDisappear { save() }
         .navigationDestination(isPresented: $navigateToRecord) {
             TeleprompterRecordingView(
                 section: legacySection,
@@ -193,7 +189,6 @@ struct MediaBinView: View {
             }
         }
         appState.updateProject(updated)
-        dismiss()
     }
 
     /// Bridge: create a legacy ScriptSection for the recording view.

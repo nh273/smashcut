@@ -36,11 +36,7 @@ struct RollArrangerView: View {
         }
         .navigationTitle("Arrange Rolls")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { save() }
-            }
-        }
+        .onDisappear { save() }
     }
 
     // MARK: - Clips Tray (unused marks)
@@ -149,7 +145,6 @@ struct RollArrangerView: View {
             }
         }
         appState.updateProject(updated)
-        dismiss()
     }
 
     private func formatDuration(_ seconds: Double) -> String {
