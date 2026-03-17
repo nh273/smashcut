@@ -8,6 +8,8 @@ struct CaptionEditorView: View {
 
     let section: ScriptSection
     let project: Project
+    /// When initialized from SectionEdit, stores the index for dual-write.
+    let sectionEditIndex: Int?
 
     @State private var viewModel: CaptionEditorViewModel
     @State private var player: AVPlayer?
@@ -19,11 +21,26 @@ struct CaptionEditorView: View {
     init(section: ScriptSection, project: Project) {
         self.section = section
         self.project = project
+        self.sectionEditIndex = nil
         let recording = section.recording ?? Recording(
             sectionID: section.id,
             rawVideoURL: URL(fileURLWithPath: "")
         )
         _viewModel = State(wrappedValue: CaptionEditorViewModel(recording: recording))
+    }
+
+    /// Initialize from a SectionEdit for the new workflow.
+    init(sectionEdit: SectionEdit, sectionIndex: Int, project: Project) {
+        // Bridge to legacy section for video playback URL
+        let legacySection = SectionEditBridge.syncToLegacy(
+            from: sectionEdit,
+            sectionID: sectionEdit.id,
+            projectID: project.id
+        )
+        self.section = legacySection
+        self.project = project
+        self.sectionEditIndex = sectionIndex
+        _viewModel = State(wrappedValue: CaptionEditorViewModel(sectionEdit: sectionEdit))
     }
 
     var body: some View {
@@ -166,14 +183,29 @@ struct CaptionEditorView: View {
 
     private func save() {
         var updated = project
+        let timestamps = viewModel.toCaptionTimestamps()
+
+        // Legacy write
         if var script = updated.script,
            let sIdx = script.sections.firstIndex(where: { $0.id == section.id }),
            var recording = script.sections[sIdx].recording {
-            recording.captionTimestamps = viewModel.toCaptionTimestamps()
+            recording.captionTimestamps = timestamps
             script.sections[sIdx].recording = recording
             updated.script = script
-            appState.updateProject(updated)
         }
+
+        // SectionEdit dual-write
+        if let editIdx = sectionEditIndex,
+           var edits = updated.sectionEdits,
+           editIdx < edits.count {
+            edits[editIdx].captionTimestamps = timestamps
+            if edits[editIdx].status == .arranged {
+                edits[editIdx].status = .captioned
+            }
+            updated.sectionEdits = edits
+        }
+
+        appState.updateProject(updated)
     }
 }
 

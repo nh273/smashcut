@@ -78,6 +78,13 @@ struct SectionEditRowView: View {
                 sectionIndex: sectionIndex
             )
         }
+        .navigationDestination(isPresented: $navigateToCaptions) {
+            CaptionEditorView(
+                sectionEdit: sectionEdit,
+                sectionIndex: sectionIndex,
+                project: project
+            )
+        }
     }
 
     @ViewBuilder
@@ -139,7 +146,6 @@ struct SectionEditRowView: View {
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(true) // Phase 4
             }
 
         case .captioned:

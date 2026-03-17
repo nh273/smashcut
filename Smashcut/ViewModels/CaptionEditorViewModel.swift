@@ -25,6 +25,13 @@ class CaptionEditorViewModel {
         self.captionStyle = recording.captionTimestamps.first?.style ?? CaptionStyle()
     }
 
+    /// Initialize from a SectionEdit's captions and duration.
+    init(sectionEdit: SectionEdit) {
+        self.totalDuration = max(sectionEdit.duration, 1)
+        self.chunks = CaptionEditorViewModel.buildChunks(from: sectionEdit.captionTimestamps)
+        self.captionStyle = sectionEdit.captionTimestamps.first?.style ?? CaptionStyle()
+    }
+
     // MARK: - Chunk conversion
 
     static func buildChunks(from timestamps: [CaptionTimestamp]) -> [EditableCaptionChunk] {
