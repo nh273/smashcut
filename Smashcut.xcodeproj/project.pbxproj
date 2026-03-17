@@ -48,6 +48,7 @@
 		971D68D2A6EDD5E8F484FB8B /* VideoTrimViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C48C0C978D4E682DD1990E8 /* VideoTrimViewModel.swift */; };
 		98C823F267E631D37FEE5D85 /* CaptionEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D46BC10B8500928036D0E8 /* CaptionEditorView.swift */; };
 		98E9AFA9B225F128324EB523 /* ScriptWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF4DE3F9CF9A956B4ECF63A /* ScriptWorkshopView.swift */; };
+		993DDC8C9F6A6B9F9A6AC611 /* MarkEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B1ADC8DCF4CAA5A29D2F1FD /* MarkEditorViewModel.swift */; };
 		A33D1A1C91C6C42625EDAA7E /* SegmentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12165C763B0D91C64F2E4D7F /* SegmentBlockView.swift */; };
 		A486B2E537367834FD97B92A /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5065C837B74C92995824036 /* ProjectListView.swift */; };
 		A85E68DB8E066EE03B81361E /* SaveStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F778C4B7611F89BB3D6160D3 /* SaveStatusView.swift */; };
@@ -56,7 +57,6 @@
 		AE80D20ED65C867FC83E3432 /* CaptionExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0592190A7FE542F3CF076843 /* CaptionExportView.swift */; };
 		AF1531977A1BA62414BBE28C /* SegmentEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD695EB699D683492B0ADC2 /* SegmentEditTests.swift */; };
 		B0FAB389F6EBBC725D44D9F3 /* CaptionStylePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD87482EEDB8EF41273F80D /* CaptionStylePickerView.swift */; };
-		B24F7C7C80391DB2FDE24B4D /* Cabbage in Frameworks */ = {isa = PBXBuildFile; productRef = 7AEBF76D07F871B54E974543 /* Cabbage */; };
 		B27AD001F6DFB6728A54105A /* TeleprompterRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB9FB4FC68233F73E9A54CE /* TeleprompterRecordingView.swift */; };
 		BE4C578A6EBAF213CD7BAD94 /* LayerAssetCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D9468AA540621FD76F215B /* LayerAssetCache.swift */; };
 		C4D0717A8F3B99BF2B9778EB /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795BDF1C12F4D92D82B2F265 /* Recording.swift */; };
@@ -64,6 +64,7 @@
 		CA7CE08EEDA713F97DDB16C6 /* TrimTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC9AEABF278990AFCE56D31 /* TrimTimelineView.swift */; };
 		D174DD99307D75E24012E110 /* LiveCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EC234D99B8FF36747D1A5B /* LiveCompositor.swift */; };
 		D64F9DD1D6463D71C90CA841 /* SmashcutApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF116A91A949180054DD7ACA /* SmashcutApp.swift */; };
+		DF19432078E02B2A33C2E33E /* MarkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CA8CFCD28177A3A1FB602 /* MarkEditorView.swift */; };
 		E0FC4FCF868E8CAC2876F548 /* BackgroundEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */; };
 		E375BF3CFF988233B7B37FFE /* CompositionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDAD59278852C474F520D61 /* CompositionService.swift */; };
 		E62166F1006F58988D107EDC /* ScriptWorkshopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */; };
@@ -120,6 +121,7 @@
 		5CB0BAD7165C660B180A8653 /* SmashcutTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SmashcutTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		65751FB53EC3045B46241A2B /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
 		66ABCA28B2207E9F9BEBFA92 /* SectionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionRowView.swift; sourceTree = "<group>"; };
+		6B1ADC8DCF4CAA5A29D2F1FD /* MarkEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkEditorViewModel.swift; sourceTree = "<group>"; };
 		6DDAD59278852C474F520D61 /* CompositionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionService.swift; sourceTree = "<group>"; };
 		741BC0EC85E4578B6E070399 /* DraftPreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftPreviewViewModel.swift; sourceTree = "<group>"; };
 		77C2FE165C3ED04A4C9CA4C1 /* Script.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Script.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 		BA0F0214A7016A177361B94F /* VideoTrimView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTrimView.swift; sourceTree = "<group>"; };
 		BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundEditorViewModel.swift; sourceTree = "<group>"; };
 		BB875035023601EEFADF8CC5 /* SectionEditRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionEditRowView.swift; sourceTree = "<group>"; };
+		BC7CA8CFCD28177A3A1FB602 /* MarkEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkEditorView.swift; sourceTree = "<group>"; };
 		BF0FDF7FC200D3879420288B /* SegmentationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationService.swift; sourceTree = "<group>"; };
 		BF116A91A949180054DD7ACA /* SmashcutApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmashcutApp.swift; sourceTree = "<group>"; };
 		C8AF8210E407CED8805013C1 /* DraftPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftPreviewView.swift; sourceTree = "<group>"; };
@@ -171,7 +174,6 @@
 				198FA3C8AD99B7E1FF09A758 /* Vision.framework in Frameworks */,
 				6B52AC116979F944D298F683 /* Photos.framework in Frameworks */,
 				8F3E1D00B3A3D8F7D564BFDD /* CoreImage.framework in Frameworks */,
-				B24F7C7C80391DB2FDE24B4D /* Cabbage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +277,7 @@
 				BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */,
 				0115789DDD25F51BA0933559 /* CaptionEditorViewModel.swift */,
 				741BC0EC85E4578B6E070399 /* DraftPreviewViewModel.swift */,
+				6B1ADC8DCF4CAA5A29D2F1FD /* MarkEditorViewModel.swift */,
 				171844DD931E72A273BE6DE6 /* MediaBinViewModel.swift */,
 				AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */,
 				A4F4102839399C630FAAB40D /* SegmentEditViewModel.swift */,
@@ -359,6 +362,7 @@
 				FC1BA54252730B5242A8501B /* CaptionExport */,
 				7FB022FFD8BD4F23B537B70D /* Common */,
 				EA0FDC7D47B7A66C010F4CDF /* DraftPreview */,
+				9E50FBFE3D5EDD925EA93BD2 /* MarkEditor */,
 				C686A1AAF93BE0EC4446E54D /* MediaBin */,
 				882ACED5EBD4641C088BFB6F /* Root */,
 				C822472C4DDEA04DA295A0C4 /* ScriptWorkshop */,
@@ -382,6 +386,14 @@
 				66ABCA28B2207E9F9BEBFA92 /* SectionRowView.swift */,
 			);
 			path = SectionManager;
+			sourceTree = "<group>";
+		};
+		9E50FBFE3D5EDD925EA93BD2 /* MarkEditor */ = {
+			isa = PBXGroup;
+			children = (
+				BC7CA8CFCD28177A3A1FB602 /* MarkEditorView.swift */,
+			);
+			path = MarkEditor;
 			sourceTree = "<group>";
 		};
 		A60146183B9E3652FBB72F55 /* SegmentEdit */ = {
@@ -504,7 +516,6 @@
 			);
 			name = Smashcut;
 			packageProductDependencies = (
-				7AEBF76D07F871B54E974543 /* Cabbage */,
 			);
 			productName = Smashcut;
 			productReference = 5786320696A6CA458A3798E6 /* Smashcut.app */;
@@ -541,9 +552,6 @@
 			);
 			mainGroup = 4239533A1E0058A80AD5F297;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				F1877C6032FAD0C2977C85C7 /* XCRemoteSwiftPackageReference "Cabbage" */,
-			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -579,6 +587,8 @@
 				7A8EA5E2AE17DAF5D846113D /* KeychainService.swift in Sources */,
 				BE4C578A6EBAF213CD7BAD94 /* LayerAssetCache.swift in Sources */,
 				D174DD99307D75E24012E110 /* LiveCompositor.swift in Sources */,
+				DF19432078E02B2A33C2E33E /* MarkEditorView.swift in Sources */,
+				993DDC8C9F6A6B9F9A6AC611 /* MarkEditorViewModel.swift in Sources */,
 				949358314D95EE3D717A2098 /* MediaBinView.swift in Sources */,
 				73394060DDFB6249CB1E8B21 /* MediaBinViewModel.swift in Sources */,
 				3490F6CF891EF4315FF04EA9 /* MediaPickerView.swift in Sources */,
@@ -924,25 +934,6 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		F1877C6032FAD0C2977C85C7 /* XCRemoteSwiftPackageReference "Cabbage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/VideoFlint/Cabbage.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		7AEBF76D07F871B54E974543 /* Cabbage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F1877C6032FAD0C2977C85C7 /* XCRemoteSwiftPackageReference "Cabbage" */;
-			productName = Cabbage;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0523F771CAE0977F642BC5E1 /* Project object */;
 }

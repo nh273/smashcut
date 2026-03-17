@@ -1,3 +1,7 @@
+// Cabbage compositor spike — disabled until Cabbage SPM dependency is fixed.
+// The Cabbage package requires AVFoundation as an SPM product which doesn't resolve.
+
+#if canImport(Cabbage)
 import AVFoundation
 import Cabbage
 import Foundation
@@ -301,3 +305,5 @@ enum CabbageError: LocalizedError {
         }
     }
 }
+
+#endif  // canImport(Cabbage)

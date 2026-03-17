@@ -61,6 +61,16 @@ struct SectionEditRowView: View {
                 sectionIndex: sectionIndex
             )
         }
+        .navigationDestination(isPresented: $navigateToMarkEditor) {
+            if let firstVideo = sectionEdit.mediaBin.first(where: { $0.type == .video }) {
+                MarkEditorView(
+                    project: project,
+                    sectionEdit: sectionEdit,
+                    sectionIndex: sectionIndex,
+                    sourceMedia: firstVideo
+                )
+            }
+        }
     }
 
     @ViewBuilder
@@ -86,13 +96,18 @@ struct SectionEditRowView: View {
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(true) // Phase 2
             }
 
         case .marked:
             HStack(spacing: 8) {
                 Button { navigateToMediaBin = true } label: {
                     Label("Media", systemImage: "photo.on.rectangle.angled")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.bordered)
+
+                Button { navigateToMarkEditor = true } label: {
+                    Label("Edit Marks", systemImage: "scissors")
                         .font(.caption.bold())
                 }
                 .buttonStyle(.bordered)
