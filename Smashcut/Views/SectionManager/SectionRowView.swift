@@ -210,6 +210,17 @@ struct SectionRowView: View {
             script.sections[idx] = updatedSection
             updatedProject.script = script
         }
+        // Dual-write: update SectionEdit media bin
+        if var edits = updatedProject.sectionEdits,
+           let idx = edits.firstIndex(where: { $0.id == section.id }) {
+            SectionEditBridge.addVideo(
+                to: &edits[idx],
+                url: destURL,
+                duration: duration,
+                captionTimestamps: timestamps
+            )
+            updatedProject.sectionEdits = edits
+        }
 
         await MainActor.run {
             appState.updateProject(updatedProject)

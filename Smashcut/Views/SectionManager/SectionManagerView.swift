@@ -60,7 +60,17 @@ struct SectionManagerView: View {
 
     @ViewBuilder
     private var scriptSection: some View {
-        if let script = currentProject.script, !script.sections.isEmpty {
+        if let edits = currentProject.sectionEdits, !edits.isEmpty {
+            Section("Sections") {
+                ForEach(Array(edits.enumerated()), id: \.element.id) { index, edit in
+                    SectionEditRowView(
+                        sectionEdit: edit,
+                        sectionIndex: index,
+                        project: currentProject
+                    )
+                }
+            }
+        } else if let script = currentProject.script, !script.sections.isEmpty {
             Section("Script") {
                 ForEach(script.sections) { section in
                     SectionRowView(section: section, project: currentProject)

@@ -26,6 +26,14 @@ struct VideoFileManager {
             .appendingPathComponent("background.\(ext)")
     }
 
+    /// URL for a media bin file (video or photo) within a section.
+    static func mediaURL(projectID: UUID, sectionID: UUID, mediaID: UUID) -> URL {
+        let dir = sectionDirectory(projectID: projectID, sectionID: sectionID)
+            .appendingPathComponent("media", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir.appendingPathComponent("\(mediaID).mp4")
+    }
+
     static func srtURL(projectID: UUID, sectionID: UUID) -> URL {
         return sectionDirectory(projectID: projectID, sectionID: sectionID)
             .appendingPathComponent("captions.srt")

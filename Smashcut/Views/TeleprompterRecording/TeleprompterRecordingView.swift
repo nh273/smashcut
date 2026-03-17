@@ -181,11 +181,24 @@ struct TeleprompterRecordingView: View {
 
     private func saveAndDismiss() {
         var updated = project
+        // Legacy write
         if var script = updated.script {
             if let idx = script.sections.firstIndex(where: { $0.id == section.id }) {
                 script.sections[idx] = vm.section
             }
             updated.script = script
+        }
+        // Dual-write: update SectionEdit media bin
+        if var edits = updated.sectionEdits,
+           let idx = edits.firstIndex(where: { $0.id == section.id }),
+           let recording = vm.section.recording {
+            SectionEditBridge.addVideo(
+                to: &edits[idx],
+                url: recording.rawVideoURL,
+                duration: recording.durationSeconds,
+                captionTimestamps: recording.captionTimestamps
+            )
+            updated.sectionEdits = edits
         }
         appState.updateProject(updated)
         dismiss()
