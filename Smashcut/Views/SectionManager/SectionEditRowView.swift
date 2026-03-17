@@ -71,6 +71,13 @@ struct SectionEditRowView: View {
                 )
             }
         }
+        .navigationDestination(isPresented: $navigateToRollArranger) {
+            RollArrangerView(
+                project: project,
+                sectionEdit: sectionEdit,
+                sectionIndex: sectionIndex
+            )
+        }
     }
 
     @ViewBuilder
@@ -117,7 +124,6 @@ struct SectionEditRowView: View {
                         .font(.caption.bold())
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(true) // Phase 3
             }
 
         case .arranged:

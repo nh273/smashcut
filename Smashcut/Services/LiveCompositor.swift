@@ -333,6 +333,39 @@ enum LiveCompositionBuilder {
         let audioMix: AVMutableAudioMix
     }
 
+    /// Builds the playable composition from a SectionEdit by flattening rolls → layers.
+    static func build(sectionEdit: SectionEdit) async throws -> Result {
+        var segment = TimelineSegment(scriptText: sectionEdit.scriptText)
+        segment.duration = sectionEdit.duration
+
+        for roll in sectionEdit.rolls {
+            for rollLayer in roll.layers {
+                var layer = rollLayer.layer
+                layer.startOffset = roll.startOffset
+                segment.layers.append(layer)
+            }
+        }
+        segment.layers.sort { $0.zIndex < $1.zIndex }
+
+        // Map captions to text layers
+        segment.textLayers = sectionEdit.captionTimestamps.map { ts in
+            let baseLayer = Layer(
+                type: .text,
+                position: NormalizedRect(x: 0, y: ts.verticalPosition, width: 1, height: 0.1),
+                zIndex: 100
+            )
+            return TextLayer(
+                layer: baseLayer,
+                text: ts.text,
+                style: ts.style,
+                startSeconds: ts.startSeconds,
+                endSeconds: ts.endSeconds
+            )
+        }
+
+        return try await build(segment: segment)
+    }
+
     /// Builds the playable composition for a TimelineSegment.
     /// Each video layer becomes a separate track; the custom compositor merges them.
     static func build(segment: TimelineSegment) async throws -> Result {

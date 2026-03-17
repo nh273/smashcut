@@ -13,6 +13,7 @@
 		10666A40146E6A31B70428E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DFC52192EEB8AA6138CF828 /* AVFoundation.framework */; };
 		10898E1D8C546FAE6D9C7F9F /* SectionEditRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB875035023601EEFADF8CC5 /* SectionEditRowView.swift */; };
 		198FA3C8AD99B7E1FF09A758 /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 450DCE75F03AA9ACFC962622 /* Vision.framework */; };
+		1BE7F6B7CC2761F587F07A98 /* RollArrangerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB5615F48575B36D46D22E8 /* RollArrangerView.swift */; };
 		1E36DFB3523BBE1EED2415B5 /* TeleprompterOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D925153B13AF56798C9238 /* TeleprompterOverlayView.swift */; };
 		207F3C6649CAA31CB90159E8 /* SectionEditBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F98657A55CF4AE596A92A2B /* SectionEditBridge.swift */; };
 		30CD376049EC72EB181CE3BE /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56F6AEF9405166DF7BEB375 /* ClaudeService.swift */; };
@@ -62,6 +63,7 @@
 		C4D0717A8F3B99BF2B9778EB /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795BDF1C12F4D92D82B2F265 /* Recording.swift */; };
 		C6B351131B79359DBE5FF67E /* CameraPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013CAD21CA6306B235839ED6 /* CameraPreviewView.swift */; };
 		CA7CE08EEDA713F97DDB16C6 /* TrimTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC9AEABF278990AFCE56D31 /* TrimTimelineView.swift */; };
+		CA9FEEAAAA16A3DE38AE80CC /* RollArrangerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6464DC724FC498022416E11 /* RollArrangerViewModel.swift */; };
 		D174DD99307D75E24012E110 /* LiveCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EC234D99B8FF36747D1A5B /* LiveCompositor.swift */; };
 		D64F9DD1D6463D71C90CA841 /* SmashcutApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF116A91A949180054DD7ACA /* SmashcutApp.swift */; };
 		DF19432078E02B2A33C2E33E /* MarkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7CA8CFCD28177A3A1FB602 /* MarkEditorView.swift */; };
@@ -104,6 +106,7 @@
 		1AE6C49CCAAC0BBB987BC35F /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		1C48C0C978D4E682DD1990E8 /* VideoTrimViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTrimViewModel.swift; sourceTree = "<group>"; };
 		1CD87482EEDB8EF41273F80D /* CaptionStylePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionStylePickerView.swift; sourceTree = "<group>"; };
+		1DB5615F48575B36D46D22E8 /* RollArrangerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollArrangerView.swift; sourceTree = "<group>"; };
 		1F98657A55CF4AE596A92A2B /* SectionEditBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionEditBridge.swift; sourceTree = "<group>"; };
 		25D925153B13AF56798C9238 /* TeleprompterOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleprompterOverlayView.swift; sourceTree = "<group>"; };
 		2D36B8A6331D90E731BCB251 /* MediaBinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaBinView.swift; sourceTree = "<group>"; };
@@ -136,6 +139,7 @@
 		9F7963FF0ADF3E6BB7B8624B /* ScriptRefinementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptRefinementView.swift; sourceTree = "<group>"; };
 		A4F4102839399C630FAAB40D /* SegmentEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentEditViewModel.swift; sourceTree = "<group>"; };
 		A5065C837B74C92995824036 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
+		A6464DC724FC498022416E11 /* RollArrangerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollArrangerViewModel.swift; sourceTree = "<group>"; };
 		A84F642CB41B138095408B86 /* SegmentEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentEditView.swift; sourceTree = "<group>"; };
 		AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptWorkshopViewModel.swift; sourceTree = "<group>"; };
 		ACD695EB699D683492B0ADC2 /* SegmentEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentEditTests.swift; sourceTree = "<group>"; };
@@ -180,6 +184,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		02492C7F3D44217FB3421A3D /* RollArranger */ = {
+			isa = PBXGroup;
+			children = (
+				1DB5615F48575B36D46D22E8 /* RollArrangerView.swift */,
+			);
+			path = RollArranger;
+			sourceTree = "<group>";
+		};
 		08E23A30724C71C33BBB3A24 /* Smashcut */ = {
 			isa = PBXGroup;
 			children = (
@@ -279,6 +291,7 @@
 				741BC0EC85E4578B6E070399 /* DraftPreviewViewModel.swift */,
 				6B1ADC8DCF4CAA5A29D2F1FD /* MarkEditorViewModel.swift */,
 				171844DD931E72A273BE6DE6 /* MediaBinViewModel.swift */,
+				A6464DC724FC498022416E11 /* RollArrangerViewModel.swift */,
 				AAA926CD69902BBCB84C94C9 /* ScriptWorkshopViewModel.swift */,
 				A4F4102839399C630FAAB40D /* SegmentEditViewModel.swift */,
 				B6FBDEB05372D67248D3E238 /* TeleprompterRecordingViewModel.swift */,
@@ -364,6 +377,7 @@
 				EA0FDC7D47B7A66C010F4CDF /* DraftPreview */,
 				9E50FBFE3D5EDD925EA93BD2 /* MarkEditor */,
 				C686A1AAF93BE0EC4446E54D /* MediaBin */,
+				02492C7F3D44217FB3421A3D /* RollArranger */,
 				882ACED5EBD4641C088BFB6F /* Root */,
 				C822472C4DDEA04DA295A0C4 /* ScriptWorkshop */,
 				9A473D49581653CF935659CF /* SectionManager */,
@@ -597,6 +611,8 @@
 				A8C073E3BF253FAC9B9DFD9D /* ProjectMediaPickerView.swift in Sources */,
 				C4D0717A8F3B99BF2B9778EB /* Recording.swift in Sources */,
 				96F072D07A3A44765EDBC774 /* RecordingService.swift in Sources */,
+				1BE7F6B7CC2761F587F07A98 /* RollArrangerView.swift in Sources */,
+				CA9FEEAAAA16A3DE38AE80CC /* RollArrangerViewModel.swift in Sources */,
 				71ACE39973FFA17BECBA4D8E /* RootView.swift in Sources */,
 				A85E68DB8E066EE03B81361E /* SaveStatusView.swift in Sources */,
 				5A4D3F509E8D13924D9884F7 /* Script.swift in Sources */,
