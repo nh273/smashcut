@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C200E319BA1D12A11515FBDA /* MarkAdjustView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F9602455F0945877015C852 /* MarkAdjustView.swift */; };
+		933B17E758DC9B0B22EFC50E /* TimelineEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4092C4DBBDEFD75A87CE128 /* TimelineEditorViewModel.swift */; };
+		467B78A029FFDF2EB3C8AC7B /* TimelineEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AFC3FAFB9874E39081667BA /* TimelineEditorView.swift */; };
+		CCB65DF2AB7E01A3A5A3CE39 /* CaptionLaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EF9452C3B3AE09B5CE19A3 /* CaptionLaneView.swift */; };
+		4C2D0C94C289A8D80AB37630 /* RollLaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984C46B99F7DE6876F91EC00 /* RollLaneView.swift */; };
+		07EA67084CE14AC4CD97C135 /* InspectorPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47A14AA3524E3385E21D00C /* InspectorPanelView.swift */; };
 		039D50F0A1BE80FD5183A3C3 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB8C6D4E565C5FCAB51BF0A /* FlowLayout.swift */; };
 		068B2F5C0A50D07E6DFC6FDB /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304B5F51DE42F20C3783EA06 /* TimelineView.swift */; };
 		069BDEBA83C692871BCA7CEA /* SectionManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDABCD779111C1CAAF688DDC /* SectionManagerView.swift */; };
@@ -96,6 +102,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6F9602455F0945877015C852 /* MarkAdjustView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkAdjustView.swift; sourceTree = "<group>"; };
+		F4092C4DBBDEFD75A87CE128 /* TimelineEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineEditorViewModel.swift; sourceTree = "<group>"; };
+		1AFC3FAFB9874E39081667BA /* TimelineEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineEditorView.swift; sourceTree = "<group>"; };
+		B1EF9452C3B3AE09B5CE19A3 /* CaptionLaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionLaneView.swift; sourceTree = "<group>"; };
+		984C46B99F7DE6876F91EC00 /* RollLaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollLaneView.swift; sourceTree = "<group>"; };
+		B47A14AA3524E3385E21D00C /* InspectorPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelView.swift; sourceTree = "<group>"; };
 		0115789DDD25F51BA0933559 /* CaptionEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionEditorViewModel.swift; sourceTree = "<group>"; };
 		013CAD21CA6306B235839ED6 /* CameraPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreviewView.swift; sourceTree = "<group>"; };
 		01A4E9CBE51DE07F0B0DC19D /* ProjectMediaPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMediaPickerView.swift; sourceTree = "<group>"; };
@@ -186,6 +198,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16C25B2CD6831E7F21D8EAFA /* TimelineEditor */ = {
+			isa = PBXGroup;
+			children = (
+				1AFC3FAFB9874E39081667BA /* TimelineEditorView.swift */,				B1EF9452C3B3AE09B5CE19A3 /* CaptionLaneView.swift */,				984C46B99F7DE6876F91EC00 /* RollLaneView.swift */,				B47A14AA3524E3385E21D00C /* InspectorPanelView.swift */,
+			);
+			path = TimelineEditor;
+			sourceTree = "<group>";
+		};
 		02492C7F3D44217FB3421A3D /* RollArranger */ = {
 			isa = PBXGroup;
 			children = (
@@ -288,6 +308,7 @@
 		4AFAE674D6D38FD49539CE12 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				F4092C4DBBDEFD75A87CE128 /* TimelineEditorViewModel.swift */,
 				BB834F935E9781A17834F476 /* BackgroundEditorViewModel.swift */,
 				0115789DDD25F51BA0933559 /* CaptionEditorViewModel.swift */,
 				741BC0EC85E4578B6E070399 /* DraftPreviewViewModel.swift */,
@@ -373,6 +394,7 @@
 		93862050F723DD8E86FC624C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				16C25B2CD6831E7F21D8EAFA /* TimelineEditor */,
 				63D306EF59646082CD17B624 /* BackgroundEditor */,
 				FF96D01A67B6944D6BE669B4 /* CaptionEditor */,
 				FC1BA54252730B5242A8501B /* CaptionExport */,
@@ -433,6 +455,7 @@
 		C686A1AAF93BE0EC4446E54D /* MediaBin */ = {
 			isa = PBXGroup;
 			children = (
+				6F9602455F0945877015C852 /* MarkAdjustView.swift */,
 				2D36B8A6331D90E731BCB251 /* MediaBinView.swift */,
 			);
 			path = MediaBin;
@@ -585,6 +608,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C200E319BA1D12A11515FBDA /* MarkAdjustView.swift in Sources */,
+				933B17E758DC9B0B22EFC50E /* TimelineEditorViewModel.swift in Sources */,
+				467B78A029FFDF2EB3C8AC7B /* TimelineEditorView.swift in Sources */,
+				CCB65DF2AB7E01A3A5A3CE39 /* CaptionLaneView.swift in Sources */,
+				4C2D0C94C289A8D80AB37630 /* RollLaneView.swift in Sources */,
+				07EA67084CE14AC4CD97C135 /* InspectorPanelView.swift in Sources */,
 				4966AF13CF146BD59F575126 /* APIKeySetupView.swift in Sources */,
 				43286C8D1B2662B3CCF821F7 /* AppState.swift in Sources */,
 				FDE0356E0B58313259A3407A /* BackgroundEditorView.swift in Sources */,

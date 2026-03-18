@@ -137,15 +137,18 @@ struct ProjectTimelineView: View {
             let contentOffset = halfWidth - viewModel.currentTime * viewModel.scale
 
             ZStack(alignment: .topLeading) {
-                // Scrolling content layer
-                ZStack(alignment: .topLeading) {
-                    // Ruler
-                    TimelineRulerView(
-                        totalDuration: viewModel.totalDuration,
-                        scale: viewModel.scale
-                    )
-                    .frame(height: 20)
+                // Fixed ruler (pinned at top, outside vertical scroll)
+                TimelineRulerView(
+                    totalDuration: viewModel.totalDuration,
+                    scale: viewModel.scale
+                )
+                .frame(height: 20)
+                .frame(width: totalWidth + geo.size.width)
+                .offset(x: contentOffset)
+                .zIndex(1)
 
+                // Vertically and horizontally scrollable content
+                ScrollView([.horizontal, .vertical]) {
                     // Segment blocks
                     HStack(spacing: 2) {
                         ForEach(
@@ -183,8 +186,8 @@ struct ProjectTimelineView: View {
                         }
                     }
                     .padding(.top, 24)
+                    .frame(width: totalWidth + geo.size.width)
                 }
-                .frame(width: totalWidth + geo.size.width) // pad so t=0 and t=end can reach center
                 .offset(x: contentOffset)
 
                 // Fixed playhead (always at center)
@@ -194,6 +197,7 @@ struct ProjectTimelineView: View {
                         .frame(width: 2)
                         .position(x: halfWidth, y: geo.size.height / 2)
                         .allowsHitTesting(false)
+                        .zIndex(2)
                 }
             }
             .clipped()

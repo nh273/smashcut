@@ -29,6 +29,49 @@ class MediaBinViewModel {
         !sectionEdit.mediaBin.isEmpty
     }
 
+    /// Full video clips in the media bin.
+    var fullClips: [SourceMedia] {
+        sectionEdit.mediaBin.filter { $0.type == .video }
+    }
+
+    /// Photos in the media bin.
+    var photos: [SourceMedia] {
+        sectionEdit.mediaBin.filter { $0.type == .photo }
+    }
+
+    /// Extracted clips (marks) from source videos.
+    var extractedClips: [Mark] {
+        sectionEdit.marks
+    }
+
+    /// Find the source media for a given mark.
+    func sourceMedia(for mark: Mark) -> SourceMedia? {
+        sectionEdit.mediaBin.first { $0.id == mark.sourceMediaID }
+    }
+
+    /// Count of marks referencing a given source media.
+    func markCount(for media: SourceMedia) -> Int {
+        sectionEdit.marks.filter { $0.sourceMediaID == media.id }.count
+    }
+
+    /// Update a mark's in/out points.
+    func updateMark(id: UUID, inSeconds: Double, outSeconds: Double) {
+        guard let idx = sectionEdit.marks.firstIndex(where: { $0.id == id }) else { return }
+        sectionEdit.marks[idx].inSeconds = max(0, inSeconds)
+        sectionEdit.marks[idx].outSeconds = max(inSeconds + 0.1, outSeconds)
+    }
+
+    /// Remove a single mark (with cascade to roll layers).
+    func removeMark(_ mark: Mark) {
+        sectionEdit.marks.removeAll { $0.id == mark.id }
+        // Cascade: remove roll layers referencing this mark
+        for i in sectionEdit.rolls.indices {
+            sectionEdit.rolls[i].layers.removeAll { rollLayer in
+                rollLayer.markID == mark.id
+            }
+        }
+    }
+
     // MARK: - Import Video
 
     func importVideo(from item: PhotosPickerItem) async {

@@ -1,15 +1,14 @@
 import SwiftUI
 
-/// Row view for a SectionEdit in the section manager. Replaces SectionRowView for the new model.
+/// Row view for a SectionEdit in the section manager. Simplified to two entry points:
+/// Media (enhanced MediaBin) and Edit Timeline (unified TimelineEditor).
 struct SectionEditRowView: View {
     let sectionEdit: SectionEdit
     let sectionIndex: Int
     let project: Project
 
     @State private var navigateToMediaBin = false
-    @State private var navigateToMarkEditor = false
-    @State private var navigateToRollArranger = false
-    @State private var navigateToCaptions = false
+    @State private var navigateToTimelineEditor = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -50,7 +49,11 @@ struct SectionEditRowView: View {
 
             HStack(spacing: 8) {
                 Spacer()
-                actionButtons
+                Button("Media") { navigateToMediaBin = true }
+                    .buttonStyle(.bordered)
+                Button("Edit Timeline") { navigateToTimelineEditor = true }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(sectionEdit.mediaBin.isEmpty)
             }
         }
         .padding(.vertical, 4)
@@ -61,110 +64,12 @@ struct SectionEditRowView: View {
                 sectionIndex: sectionIndex
             )
         }
-        .navigationDestination(isPresented: $navigateToMarkEditor) {
-            if let firstVideo = sectionEdit.mediaBin.first(where: { $0.type == .video }) {
-                MarkEditorView(
-                    project: project,
-                    sectionEdit: sectionEdit,
-                    sectionIndex: sectionIndex,
-                    sourceMedia: firstVideo
-                )
-            }
-        }
-        .navigationDestination(isPresented: $navigateToRollArranger) {
-            RollArrangerView(
+        .navigationDestination(isPresented: $navigateToTimelineEditor) {
+            TimelineEditorView(
                 project: project,
                 sectionEdit: sectionEdit,
                 sectionIndex: sectionIndex
             )
-        }
-        .navigationDestination(isPresented: $navigateToCaptions) {
-            CaptionEditorView(
-                sectionEdit: sectionEdit,
-                sectionIndex: sectionIndex,
-                project: project
-            )
-        }
-    }
-
-    @ViewBuilder
-    private var actionButtons: some View {
-        switch sectionEdit.status {
-        case .empty:
-            Button { navigateToMediaBin = true } label: {
-                Label("Add Media", systemImage: "photo.badge.plus")
-                    .font(.caption.bold())
-            }
-            .buttonStyle(.borderedProminent)
-
-        case .hasMedia:
-            HStack(spacing: 8) {
-                Button { navigateToMediaBin = true } label: {
-                    Label("Media Bin", systemImage: "photo.on.rectangle.angled")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.bordered)
-
-                Button { navigateToMarkEditor = true } label: {
-                    Label("Mark Clips", systemImage: "scissors")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.borderedProminent)
-            }
-
-        case .marked:
-            HStack(spacing: 8) {
-                Button { navigateToMediaBin = true } label: {
-                    Label("Media", systemImage: "photo.on.rectangle.angled")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.bordered)
-
-                Button { navigateToMarkEditor = true } label: {
-                    Label("Edit Marks", systemImage: "scissors")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.bordered)
-
-                Button { navigateToRollArranger = true } label: {
-                    Label("Arrange Rolls", systemImage: "rectangle.split.3x1")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.borderedProminent)
-            }
-
-        case .arranged:
-            HStack(spacing: 8) {
-                Button { navigateToMediaBin = true } label: {
-                    Label("Media", systemImage: "photo.on.rectangle.angled")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.bordered)
-
-                Button { navigateToCaptions = true } label: {
-                    Label("Captions", systemImage: "captions.bubble")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.borderedProminent)
-            }
-
-        case .captioned:
-            HStack(spacing: 8) {
-                Button { navigateToMediaBin = true } label: {
-                    Label("Media", systemImage: "photo.on.rectangle.angled")
-                        .font(.caption.bold())
-                }
-                .buttonStyle(.bordered)
-
-                Label("Ready to Export", systemImage: "square.and.arrow.up")
-                    .font(.caption.bold())
-                    .foregroundStyle(.orange)
-            }
-
-        case .exported:
-            Label("Exported", systemImage: "checkmark.circle.fill")
-                .font(.caption.bold())
-                .foregroundStyle(.green)
         }
     }
 }
